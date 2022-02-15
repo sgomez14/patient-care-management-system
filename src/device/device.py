@@ -153,12 +153,20 @@ def check_metadata_keys(measurement_key: str, data: List[dict]): # -> List[bool,
         if measurement_key_occurrence != 1:
             return [False, "measurement key is not in inner data packet"]
 
+        # confirmed that measurement_key is in inner data packet, now can safely remove & continue checking other keys
+        metaKeys.remove(measurement_key)
+
         # check that metadata keys only occur once within the inner data packet
         for key in metaKeys:
             key_occurrence = metadata_keys.count(key)
             if key_occurrence != 1:
                 logging.error("error is happening in check_metadata_keys")
+                logging.error(f"key: {key}, key_occurence: {key_occurrence}")
                 return [False, f"incorrect key in data structure: {key} or it appears multiple times"]
+
+    message = "Inner data keys validated"
+    logging.info(message)
+    return [True, message]
 
 
 def write_to_database(json_data: json): # -> List[bool, str]:
