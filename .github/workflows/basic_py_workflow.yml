@@ -26,18 +26,18 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Lint with flake8
         run: |
-          stop the build if there are Python syntax errors or undefined names
-          added the following linting codes for my style
-          E221	multiple spaces before operator
-          E222	multiple spaces after operator
-          E262	inline comment should start with ‘# ‘
-          E305	expected 2 blank lines after end of function or class
-          E4	Import
-          F401	module imported but unused
-          F404	future import(s) name after other statements
-          F541	f-string without any placeholders
+         # stop the build if there are Python syntax errors or undefined names
+         # added the following linting codes for my style
+         # E221	multiple spaces before operator
+         # E222	multiple spaces after operator
+         # E262	inline comment should start with ‘# ‘
+         # E305	expected 2 blank lines after end of function or class
+         # E4	  Import
+         # F401	module imported but unused
+         # F404	future import(s) name after other statements
+         # F541	f-string without any placeholders
           flake8 . --count --select=E9,E221,E222,E262,E305,E4,F401,F404,F541,EF63,F7,F82 --show-source --statistics
-          exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
           
 #  disable pytest          
