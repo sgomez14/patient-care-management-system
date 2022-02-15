@@ -5,7 +5,7 @@ import json
 database: str = "data/database.json"
 
 
-def send_measurements(json_file: str): #-> List[bool, str]:
+def send_measurements(json_file: str):  # -> List[bool, str]:
     """This function receives a JSON file and returns a list.
        The list index 0 indicates success of function and index 1 provides a status message"""
 
@@ -23,7 +23,7 @@ def send_measurements(json_file: str): #-> List[bool, str]:
 
 
 # returns file type as string else it returns "invalidFileName"
-def is_JSON_file(file: str): #-> List[bool, str]:
+def is_JSON_file(file: str):  # -> List[bool, str]:
 
     logging.info("Determining file type.")
     # print("Determining file type.")
@@ -56,7 +56,7 @@ def is_JSON_file(file: str): #-> List[bool, str]:
             return [False, "invalidFileName"]
 
 
-def validate_JSON(json_file: str): # -> List[bool, str]:
+def validate_JSON(json_file: str):  # -> List[bool, str]:
 
     is_JSON_file_results: List[bool, str] = is_JSON_file(json_file)
 
@@ -111,7 +111,7 @@ def validate_JSON(json_file: str): # -> List[bool, str]:
             return [False, openResult]
 
 
-def check_primary_keys(keys: List[str]): # -> List[bool, str]:
+def check_primary_keys(keys: List[str]):  # -> List[bool, str]:
     primary_keys = ["patientID", "deviceID", "deviceType", "measurements"]
 
     # check that json has four primary keys
@@ -127,7 +127,7 @@ def check_primary_keys(keys: List[str]): # -> List[bool, str]:
     return [True, "all keys correct"]
 
 
-def check_measurement_keys(keys: List[str]): # -> List[bool, str]:
+def check_measurement_keys(keys: List[str]):  # -> List[bool, str]:
     """This function verifies the keys and values in measurements data structure"""
     measurement_keys = ["temperature", "blood_pressure", "pulse", "oximeter",
                         "weight", "glucometer"]
@@ -142,7 +142,7 @@ def check_measurement_keys(keys: List[str]): # -> List[bool, str]:
     return [True, "all keys correct"]
 
 
-def check_metadata_keys(measurement_key: str, data: List[dict]): # -> List[bool, str]:
+def check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[bool, str]:
     metadata_keys = ["unit", "timestamp", "comments"]
 
     for data_dict in data:
@@ -161,7 +161,7 @@ def check_metadata_keys(measurement_key: str, data: List[dict]): # -> List[bool,
             key_occurrence = metadata_keys.count(key)
             if key_occurrence != 1:
                 logging.error("error is happening in check_metadata_keys")
-                logging.error(f"key: {key}, key_occurence: {key_occurrence}")
+                logging.error(f"key: {key}, key_occurrence: {key_occurrence}")
                 return [False, f"incorrect key in data structure: {key} or it appears multiple times"]
 
     message = "Inner data keys validated"
@@ -169,7 +169,7 @@ def check_metadata_keys(measurement_key: str, data: List[dict]): # -> List[bool,
     return [True, message]
 
 
-def write_to_database(json_data: json): # -> List[bool, str]:
+def write_to_database(json_data: json):  # -> List[bool, str]:
     try:
         with open(database, "w") as json_file:
             json.dump(json_data, json_file, indent=4)
