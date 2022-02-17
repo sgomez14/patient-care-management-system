@@ -74,14 +74,14 @@ def validate_JSON(json_file: str):  # -> List[bool, str]:
 
                 # check primaryKeys
                 primaryKeys = list(data.keys())
-                primaryKeys_check_results = check_primary_keys(primaryKeys)
+                primaryKeys_check_results = check_primary_keys(primaryKeys, data)
 
                 if not primaryKeys_check_results[0]:
                     return primaryKeys_check_results
 
                 # check measurementKeys
                 measureKeys = list(data["measurements"].keys())
-                measureKeys_check_results = check_measurement_keys(measureKeys)
+                measureKeys_check_results = check_measurement_keys(measureKeys, data)
 
                 if not measureKeys_check_results[0]:
                     return measureKeys_check_results
@@ -111,8 +111,8 @@ def validate_JSON(json_file: str):  # -> List[bool, str]:
             return [False, openResult]
 
 
-def check_primary_keys(keys: List[str]):  # -> List[bool, str]:
-    primary_keys = ["patientID", "deviceID", "deviceType", "measurements"]
+def check_primary_keys(keys: List[str], json_data: json):  # -> List[bool, str]:
+    primary_keys: List[str] = ["patientID", "deviceID", "deviceType", "measurements"]
 
     # check that json has four primary keys
     if len(keys) != len(primary_keys):
@@ -124,11 +124,30 @@ def check_primary_keys(keys: List[str]):  # -> List[bool, str]:
         if key_occurrence != 1:
             return [False, f"incorrect key in data structure: {key} or it appears multiple times"]
 
-    return [True, "all keys correct"]
+    # at this point we have confirmed that each key from user file matches primary keys in schema
+    # now we can use the primary keys to check the data types for each key/value pair
+    # patientID: int, deviceID = int, deviceType: int, measurements: dict
+    for key in primary_keys:
+        if key == "measurements":
+            if not isinstance(json_data[key], dict):
+                msg = "measurements key does not have a dictionary assigned to it."
+                logging.error(msg)
+                return [False, msg]
+        else:
+            if not isinstance(json_data[key], int):
+                msg = f"{key} key does not have an int value assigned to it."
+                logging.error(msg)
+                return [False, msg]
+
+    # the primary keys and their respective value validate
+    return [True, "all keys correct with corresponding value type"]
 
 
-def check_measurement_keys(keys: List[str]):  # -> List[bool, str]:
+def check_measurement_keys(keys: List[str], json_data: json):  # -> List[bool, str]:
     """This function verifies the keys and values in measurements data structure"""
+
+    # measure_key is the string for the name of the measurements key
+    measure_key = "measurements"
     measurement_keys = ["temperature", "blood_pressure", "pulse", "oximeter",
                         "weight", "glucometer"]
 
@@ -136,22 +155,70 @@ def check_measurement_keys(keys: List[str]):  # -> List[bool, str]:
     for key in keys:
         key_occurrence = measurement_keys.count(key)
         if key_occurrence != 1:
-            logging.error("error is happening in check_measurement_keys")
-            return [False, f"incorrect key in data structure: {key} or it appears multiple times"]
+            msg = f"incorrect key in data structure: {key} or it appears multiple times"
+            logging.error(msg)
+            return [False, msg]
 
-    return [True, "all keys correct"]
+        # first index into measurements dictionary and then index by each key within the measurements dictionary
+        # each measurement key needs to have a list
+        if not isinstance(json_data[measure_key][key], list):
+            msg = f"{key} key does not have a list value assigned to it."
+            logging.error(msg)
+            return [False, msg]
+
+    # the measurement keys and their respective value validate
+    return [True, "all keys correct with corresponding value type"]
 
 
 def check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[bool, str]:
     metadata_keys = ["unit", "timestamp", "comments"]
 
     for data_dict in data:
+        # grab the keys within the dictionary
         metaKeys = list(data_dict.keys())
         measurement_key_occurrence = metaKeys.count(measurement_key)
 
         # measurement_key must be present in inner data packet
         if measurement_key_occurrence != 1:
             return [False, "measurement key is not in inner data packet"]
+
+        # check that keys for blood_pressure dictionary are named systolic and diastolic
+        if measurement_key == "blood_pressure":
+
+            # highest blood pressure record according to NIH:
+            # https://pubmed.ncbi.nlm.nih.gov/7741618/#:~:text=The%20highest%20pressure%20recorded%20in,005).
+            SYSTOLIC_MAX: int = 370
+            DIASTOLIC_MAX: int = 360
+            # blood pressure dictionary must have two keys: systolic and diastolic
+            if len(data_dict[measurement_key]) != 2:
+                msg = f"there are more than two keys in the {measurement_key} dictionary"
+                logging.error(msg)
+                return [False, msg]
+
+            for key in data_dict[measurement_key].keys():
+                # check that keys are either systolic or diastolic
+                if key != "systolic" and key != "diastolic":
+                    msg = f"{key} key in the {measurement_key} dictionary is not named systolic or diastolic"
+                    logging.error(msg)
+                    return [False, msg]
+
+                if not isinstance(data_dict[measurement_key][key], (int, float)):
+                    msg = f"{key} key in the {measurement_key} dictionary does not have a int or float value"
+                    logging.error(msg)
+                    return [False, msg]
+
+                if key == "systolic":
+                    systolic_measurement = int(data_dict[measurement_key][key])
+                    if systolic_measurement < 0 or systolic_measurement > SYSTOLIC_MAX:
+                        msg = f"{key} pressure value of {systolic_measurement} must be between 0 and {SYSTOLIC_MAX}"
+                        logging.error(msg)
+                        return [False, msg]
+                elif key == "diastolic":
+                    diastolic_measurement = int(data_dict[measurement_key][key])
+                    if diastolic_measurement < 0 or diastolic_measurement > DIASTOLIC_MAX:
+                        msg = f"{key} pressure value of {diastolic_measurement} must be between 0 and {DIASTOLIC_MAX}"
+                        logging.error(msg)
+                        return [False, msg]
 
         # confirmed that measurement_key is in inner data packet, now can safely remove & continue checking other keys
         metaKeys.remove(measurement_key)
