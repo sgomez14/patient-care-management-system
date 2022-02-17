@@ -1,6 +1,8 @@
 from typing import List
+from datetime import datetime
 import logging
 import json
+import os
 
 database: str = "data/database.json"
 
@@ -69,6 +71,13 @@ def validate_JSON(json_file: str):  # -> List[bool, str]:
     else:
         try:
             with open(json_file, "r") as inFile:
+
+                # check if json file has no content
+                if os.path.getsize(json_file) == 0:
+                    msg = f"{json_file} is empty"
+                    logging.error(msg)
+                    return [False, msg]
+
                 # read the entire json file
                 data = json.load(inFile)
 
@@ -171,7 +180,7 @@ def check_measurement_keys(keys: List[str], json_data: json):  # -> List[bool, s
 
 
 def check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[bool, str]:
-    metadata_keys = ["unit", "timestamp", "comments"]
+    metadata_keys: str = ["unit", "timestamp", "comments"]
 
     for data_dict in data:
         # grab the keys within the dictionary
@@ -189,8 +198,9 @@ def check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[bool
             # https://pubmed.ncbi.nlm.nih.gov/7741618/#:~:text=The%20highest%20pressure%20recorded%20in,005).
             SYSTOLIC_MAX: int = 370
             DIASTOLIC_MAX: int = 360
+            elements_in_blood_pressure_dict: int = 2
             # blood pressure dictionary must have two keys: systolic and diastolic
-            if len(data_dict[measurement_key]) != 2:
+            if len(data_dict[measurement_key]) != elements_in_blood_pressure_dict:
                 msg = f"there are more than two keys in the {measurement_key} dictionary"
                 logging.error(msg)
                 return [False, msg]
@@ -219,19 +229,46 @@ def check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[bool
                         msg = f"{key} pressure value of {diastolic_measurement} must be between 0 and {DIASTOLIC_MAX}"
                         logging.error(msg)
                         return [False, msg]
+        else:
+            # if the measurement_key is not blood_pressure, then its accompanying value should be an int or a float
+            if not isinstance(data_dict[measurement_key], (int, float)):
+                msg = f"{measurement_key} key has value {data_dict[measurement_key]}, and it is not an int or float."
+                logging.error(msg)
+                return [False, msg]
 
         # confirmed that measurement_key is in inner data packet, now can safely remove & continue checking other keys
         metaKeys.remove(measurement_key)
 
-        # check that metadata keys only occur once within the inner data packet
+        # check that metadata keys only occur once within the inner data packet, and validate values
         for key in metaKeys:
             key_occurrence = metadata_keys.count(key)
             if key_occurrence != 1:
                 logging.error("error is happening in check_metadata_keys")
-                logging.error(f"key: {key}, key_occurrence: {key_occurrence}")
+                logging.error(f"key: {key}, key_occurrence: {key_occurrence}, it should only occur once")
                 return [False, f"incorrect key in data structure: {key} or it appears multiple times"]
 
-    message = "Inner data keys validated"
+            # checking timestamp value
+            if key == "timestamp":
+                verify_timestamp_result = verify_timestamp(data_dict[key])
+
+                if not verify_timestamp_result[0]:
+                    return verify_timestamp_result
+
+            # checking unit value
+            elif key == "unit":
+                verify_units_result = verify_units(measurement_key, data_dict[key])
+
+                if not verify_units_result[0]:
+                    return verify_units_result
+
+            else:
+                # checking that the comments are actually a string
+                if not isinstance(data_dict[key], str):
+                    msg = f"{key} key has value {data_dict[key]} but it must be a string"
+                    logging.error(msg)
+                    return [False, msg]
+
+    message = "Inner data keys and values validated"
     logging.info(message)
     return [True, message]
 
@@ -250,6 +287,94 @@ def write_to_database(json_data: json):  # -> List[bool, str]:
         logging.error(message)
 
         return [False, message]
+
+
+def verify_units(measurement_key: str, unit: str):  # -> List[bool, str]
+    supported_measurements = ["temperature", "blood_pressure", "pulse", "oximeter",
+                              "weight", "glucometer"]
+
+    supported_units = {"temperature": ["F", "C"], "blood_pressure": "mmHg", "pulse": "bpm", "oximeter": "%",
+                       "weight": ["lbs", "kg"], "glucometer": "mg/dl"}
+
+    result: bool = False
+
+    if measurement_key not in supported_measurements:
+        msg = f"{measurement_key} is not a supported measurement key"
+        logging.error(msg)
+        return [False, msg]
+
+    if measurement_key == "temperature":
+        if unit.upper() == supported_units[measurement_key][0] or unit.upper() == supported_units[measurement_key][1]:
+            result = True
+        else:
+            result = False
+
+    elif measurement_key == "blood_pressure":
+        if unit == supported_units[measurement_key]:
+            result = True
+        else:
+            result = False
+
+    elif measurement_key == "pulse":
+        if unit.lower() == supported_units[measurement_key]:
+            result = True
+        else:
+            result = False
+
+    elif measurement_key == "oximeter":
+        if unit == supported_units[measurement_key]:
+            result = True
+        else:
+            result = False
+
+    elif measurement_key == "weight":
+        if unit.lower() == supported_units[measurement_key][0] or unit.lower() == supported_units[measurement_key][1]:
+            result = True
+        else:
+            result = False
+
+    elif measurement_key == "glucometer":
+        if unit == supported_units[measurement_key]:
+            result = True
+        else:
+            result = False
+
+    if result:
+        msg = f"{unit} unit for {measurement_key} validated"
+        logging.info(msg)
+        return [True, msg]
+    else:
+        msg = f"{unit} unit is not valid unit for {measurement_key}."
+        logging.error(msg)
+        return [False, msg]
+
+
+def verify_timestamp(timestamp: str): # -> List[bool, str]
+    """This function verifies that timestamp adheres to ISO 8601 standard"""
+
+    iso8601_format: str = "%Y-%m-%dT%H:%M:%S"
+
+    if not isinstance(timestamp, str):
+        msg = f"{timestamp} timestamp must be a string"
+        logging.error(msg)
+        return [False, msg]
+
+    try:
+        if datetime.strptime(timestamp, iso8601_format):
+            msg = f"{timestamp} timestamp validated."
+            logging.info(msg)
+            return [True, msg]
+
+        else:
+            msg = f"provided timestamp {timestamp} does not adhere to ISO8601 standard," \
+                  f" eg. 1991-10-28T01:30:58"
+            logging.error(msg)
+            return [False, msg]
+    except ValueError:
+        msg = f"provided timestamp {timestamp} does not adhere to ISO8601 standard," \
+              f" eg. 1991-10-28T01:30:58"
+        logging.error(msg)
+        return [False, msg]
 
 
 if __name__ == '__main__':

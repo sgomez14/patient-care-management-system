@@ -30,9 +30,21 @@ def test_validate_temp_bp_json() -> None:
 
     input_file = "data/temp_bp.json"
 
-    results = device.send_measurements(input_file)
+    results = device.validate_JSON(input_file)
 
     API_success: bool = results[0]
 
     assert API_success == True
+
+
+def test_empty_json_file() -> None:
+    """Test validate API call for an empty JSON file"""
+
+    input_file = "data/emptyFile.json"
+
+    results = device.validate_JSON(input_file)
+
+    API_success: bool = results[0]
+
+    assert API_success == False
 
