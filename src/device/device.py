@@ -4,8 +4,6 @@ import logging
 import json
 import os
 
-database: str = "data/database.json"
-
 
 def send_measurements(json_file: str):  # -> List[bool, str]:
     """This function receives a JSON file and returns a list.
@@ -176,32 +174,32 @@ def check_measurement_keys(keys: List[str], json_data: json):  # -> List[bool, s
             return [False, msg]
 
     # the measurement keys and their respective value validate
-    return [True, "all keys correct with corresponding value type"]
+    return [True, "all measurement keys are valid and have an accompanying list"]
 
 
 def check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[bool, str]:
-    metadata_keys: str = ["unit", "timestamp", "comments"]
+    metadata_keys: List[str] = ["unit", "timestamp", "comments"]
 
+    # each measurement_key will have a list that can contain
+    # multiple inner dictionaries encapsulating the device's measurement data
     for data_dict in data:
         # grab the keys within the dictionary
         metaKeys = list(data_dict.keys())
-        measurement_key_occurrence = metaKeys.count(measurement_key)
 
         # measurement_key must be present in inner data packet
+        measurement_key_occurrence = metaKeys.count(measurement_key)
         if measurement_key_occurrence != 1:
-            return [False, "measurement key is not in inner data packet"]
+            msg = f"{measurement_key} measurement key is not in inner data packet."
+            logging.error(msg)
+            return [False, msg]
 
         # check that keys for blood_pressure dictionary are named systolic and diastolic
         if measurement_key == "blood_pressure":
-
-            # highest blood pressure record according to NIH:
-            # https://pubmed.ncbi.nlm.nih.gov/7741618/#:~:text=The%20highest%20pressure%20recorded%20in,005).
-            SYSTOLIC_MAX: int = 370
-            DIASTOLIC_MAX: int = 360
-            elements_in_blood_pressure_dict: int = 2
             # blood pressure dictionary must have two keys: systolic and diastolic
+            elements_in_blood_pressure_dict: int = 2
+
             if len(data_dict[measurement_key]) != elements_in_blood_pressure_dict:
-                msg = f"there are more than two keys in the {measurement_key} dictionary"
+                msg = f"there are not enough keys in the {measurement_key} dictionary"
                 logging.error(msg)
                 return [False, msg]
 
@@ -212,29 +210,12 @@ def check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[bool
                     logging.error(msg)
                     return [False, msg]
 
-                if not isinstance(data_dict[measurement_key][key], (int, float)):
-                    msg = f"{key} key in the {measurement_key} dictionary does not have a int or float value"
-                    logging.error(msg)
-                    return [False, msg]
-
-                if key == "systolic":
-                    systolic_measurement = int(data_dict[measurement_key][key])
-                    if systolic_measurement < 0 or systolic_measurement > SYSTOLIC_MAX:
-                        msg = f"{key} pressure value of {systolic_measurement} must be between 0 and {SYSTOLIC_MAX}"
-                        logging.error(msg)
-                        return [False, msg]
-                elif key == "diastolic":
-                    diastolic_measurement = int(data_dict[measurement_key][key])
-                    if diastolic_measurement < 0 or diastolic_measurement > DIASTOLIC_MAX:
-                        msg = f"{key} pressure value of {diastolic_measurement} must be between 0 and {DIASTOLIC_MAX}"
-                        logging.error(msg)
-                        return [False, msg]
-        else:
-            # if the measurement_key is not blood_pressure, then its accompanying value should be an int or a float
-            if not isinstance(data_dict[measurement_key], (int, float)):
-                msg = f"{measurement_key} key has value {data_dict[measurement_key]}, and it is not an int or float."
-                logging.error(msg)
-                return [False, msg]
+        # verify the measurement values attached to the inner data packet measurement key
+        measurement = data_dict[measurement_key]
+        unit = data_dict["unit"]
+        verify_measurement_range_results = verify_measurement_range(measurement_key,measurement, unit)
+        if not verify_measurement_range_results[0]:
+            return verify_measurement_range_results
 
         # confirmed that measurement_key is in inner data packet, now can safely remove & continue checking other keys
         metaKeys.remove(measurement_key)
@@ -244,8 +225,9 @@ def check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[bool
             key_occurrence = metadata_keys.count(key)
             if key_occurrence != 1:
                 logging.error("error is happening in check_metadata_keys")
-                logging.error(f"key: {key}, key_occurrence: {key_occurrence}, it should only occur once")
-                return [False, f"incorrect key in data structure: {key} or it appears multiple times"]
+                msg = f"key: {key}, key_occurrence: {key_occurrence}, it should only occur once"
+                logging.error(msg)
+                return [False, msg]
 
             # checking timestamp value
             if key == "timestamp":
@@ -268,12 +250,13 @@ def check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[bool
                     logging.error(msg)
                     return [False, msg]
 
-    message = "Inner data keys and values validated"
-    logging.info(message)
-    return [True, message]
+    msg = "Inner data keys and values validated"
+    logging.info(msg)
+    return [True, msg]
 
 
 def write_to_database(json_data: json):  # -> List[bool, str]:
+    database: str = "data/database.json"
     try:
         with open(database, "w") as json_file:
             json.dump(json_data, json_file, indent=4)
@@ -349,7 +332,7 @@ def verify_units(measurement_key: str, unit: str):  # -> List[bool, str]
         return [False, msg]
 
 
-def verify_timestamp(timestamp: str): # -> List[bool, str]
+def verify_timestamp(timestamp: str):  # -> List[bool, str]
     """This function verifies that timestamp adheres to ISO 8601 standard"""
 
     iso8601_format: str = "%Y-%m-%dT%H:%M:%S"
@@ -377,7 +360,116 @@ def verify_timestamp(timestamp: str): # -> List[bool, str]
         return [False, msg]
 
 
+def verify_measurement_range(measurement_type: str, measurement, unit: str):  # -> List[bool, str]
+    # lowest temp: https://www.guinnessworldrecords.com/world-records/67747-lowest-body-temperature
+    # highest temp: https://www.npr.org/sections/goatsandsoda/2014/11/14/364060441/you-might-be-surprised-when-you-take-your-temperature
+
+    # max blood pressure: https://pubmed.ncbi.nlm.nih.gov/7741618/#:~:text=The%20highest%20pressure%20recorded%20in,005)
+
+    # lowest pulse: https://www.guinnessworldrecords.com/world-records/lowest-heart-rate
+    # highest pulse: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3273956/
+
+    # highest weight: https://www.guinnessworldrecords.com/news/2018/12/history-of-heaviest-humans-as-worlds-biggest-man-loses-half-his-body-weight-550495
+
+    # highest glucose: https://www.guinnessworldrecords.com/world-records/highest-blood-sugar-level
+
+    supported = {"temperature": {"min": {"F": 53, "C": 11}, "max": {"F": 115, "C": 46}},
+                 "blood_pressure": {"min": {"systolic": 0, "diastolic": 0}, "max": {"systolic": 370, "diastolic": 360}},
+                 "pulse": {"min": 27, "max": 480},
+                 "oximeter": {"min": 0, "max": 100},
+                 "weight": {"min": {"lbs": 0, "kg": 0}, "max": {"lbs": 946, "kg": 429}},
+                 "glucometer": {"min": 0, "max": 2656}}
+
+    # check that measurement_type value is a string
+    if not isinstance(measurement_type, str):
+        msg = f"Passed {measurement_type} as a measurement_type, but expected a string."
+        logging.error(msg)
+        return [False, msg]
+
+    # check the measurement_type is supported, the count must equal 1 to indicate that measurement_type is supported
+    if list(supported.keys()).count(measurement_type) != 1:
+        msg = f"Passed {measurement_type} as a measurement_type, but it is not supported." \
+              f"Supported measurement types are {list(supported.keys())}"
+        logging.error(msg)
+        return [False, msg]
+
+    # check that the units are correct
+    verify_units_result = verify_units(measurement_type, unit)
+    if not verify_units_result[0]:
+        return verify_units_result
+
+    # check that measurement value is int or float
+    # blood_pressure measurement needs special processing since it is passed a dictionary with two inner measurements
+    measurement_list = []
+    if measurement_type == "blood_pressure":
+        measurement_list.append(measurement["systolic"])
+        measurement_list.append(measurement["diastolic"])
+    else:
+        measurement_list.append(measurement)
+
+    for reading in measurement_list:
+        if not isinstance(reading, (int, float)):
+            msg = f"Passed {reading} as a measurement, but expected an int or float."
+            logging.error(msg)
+            return [False, msg]
+
+    MIN = 0
+    MAX = 100
+
+    # grab max and min from dictionary
+    if measurement_type == "temperature":
+        MAX = supported[measurement_type]["max"][unit]
+        MIN = supported[measurement_type]["min"][unit]
+
+    elif measurement_type == "weight":
+        MAX = supported[measurement_type]["max"][unit]
+        MIN = supported[measurement_type]["min"][unit]
+
+    elif measurement_type == "blood_pressure":
+        MAX_SYSTOLIC = supported[measurement_type]["max"]["systolic"]
+        MIN_SYSTOLIC = supported[measurement_type]["min"]["systolic"]
+
+        MAX_DIASTOLIC = supported[measurement_type]["max"]["diastolic"]
+        MIN_DIASTOLIC = supported[measurement_type]["min"]["diastolic"]
+
+        systolic_reading = measurement["systolic"]
+        diastolic_reading = measurement["diastolic"]
+
+    else:
+        MAX = supported[measurement_type]["max"]
+        MIN = supported[measurement_type]["min"]
+
+    # check that measurements are within expected ranges
+    if measurement_type == "blood_pressure":
+        min_bp = "min"
+        max_bp = "max"
+        if systolic_reading < MIN_SYSTOLIC or systolic_reading > MAX_SYSTOLIC:
+            msg = f"{measurement_type} measurement of {measurement} is not in valid range." \
+                  f" MIN: {supported[measurement_type][min_bp]}, MAX: {supported[measurement_type][max_bp]}."
+            logging.error(msg)
+            return [False, msg]
+
+        if diastolic_reading < MIN_DIASTOLIC or diastolic_reading > MAX_DIASTOLIC:
+            msg = f"{measurement_type} measurement of {measurement} is not in valid range." \
+                  f" MIN: {supported[measurement_type][min_bp]}, MAX: {supported[measurement_type][max_bp]}."
+            logging.error(msg)
+            return [False, msg]
+
+    else:
+        if measurement < MIN or measurement > MAX:
+            msg = f"{measurement_type} measurement of {measurement} is not in valid range. MIN: {MIN}, MAX: {MAX}."
+            logging.error(msg)
+            return [False, msg]
+
+    msg = f"{measurement_type} measurement of {measurement} is in valid range. MIN: {MIN}, MAX: {MAX}."
+    logging.info(msg)
+    return [True, msg]
+
+
 if __name__ == '__main__':
     file = "data/tempJSON.json"
     # placeholder for testing device.py
-    print(send_measurements(file))
+    # print(send_measurements(file))
+
+    print(verify_measurement_range("temperature", 98, "F"))
+    print(verify_measurement_range("temperature", 200, "F"))
