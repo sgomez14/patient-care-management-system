@@ -36,4 +36,4 @@ api.add_resource(ValidateJSON, "/device/validate/<string:json_file>")
 api.add_resource(SendMeasurements, "/device/send-measurements/<string:json_file>")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    application.run(debug=True)
