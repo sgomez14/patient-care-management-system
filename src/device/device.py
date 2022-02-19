@@ -22,8 +22,8 @@ def send_measurements(json_file: str):  # -> List[bool, str]:
     return database_write_result
 
 
-# returns file type as string else it returns "invalidFileName"
 def is_JSON_file(file: str):  # -> List[bool, str]:
+    """Returns file type as string else it returns invalidFileName"""
 
     logging.info("Determining file type.")
     # print("Determining file type.")
@@ -57,6 +57,7 @@ def is_JSON_file(file: str):  # -> List[bool, str]:
 
 
 def validate_JSON(json_file: str):  # -> List[bool, str]:
+    """This function checks that the json adheres to the device module's json schema"""
 
     is_JSON_file_results: List[bool, str] = is_JSON_file(json_file)
 
