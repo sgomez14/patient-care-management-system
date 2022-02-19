@@ -4,7 +4,7 @@ import device
 
 application = Flask(__name__)
 app = application
-api = Api(app)
+api = Api(application)
 
 data_directory: str = "data/"
 
@@ -36,4 +36,5 @@ api.add_resource(ValidateJSON, "/device/validate/<string:json_file>")
 api.add_resource(SendMeasurements, "/device/send-measurements/<string:json_file>")
 
 if __name__ == "__main__":
-    application.run(debug=True)
+    # application.run(debug=True)
+    application.run()
