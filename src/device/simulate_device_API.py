@@ -22,7 +22,13 @@ def rest_api_validate(file):
     print("URL invoked for validation: " + BASE + "device/validate/" + file)
 
     response = requests.get(BASE + "device/validate/" + file)
-    json_response = json.dumps(response.json(), indent=4)
+
+    print(response.status_code)
+
+    if response.ok:
+        json_response = json.dumps(response.json(), indent=4)
+    else:
+        json_response = "error with request"
 
     print(json_response)
 
@@ -31,7 +37,13 @@ def rest_api_send_measurements(file):
     print("URL invoked for sending measurement: " + BASE + "device/send-measurements/" + file)
 
     response = requests.post(BASE + "device/send-measurements/" + file)
-    json_response = json.dumps(response.json(), indent=4)
+
+    print(response.status_code)
+
+    if response.ok:
+        json_response = json.dumps(response.json(), indent=4)
+    else:
+        json_response = "error with request"
 
     print(json_response)
 
@@ -41,30 +53,21 @@ if __name__ == '__main__':
     file2 = "data/temp_bp.json"
     files = ["tempJSON.json", "temp_bp.json"]
     database_file = "data/database.json"
-    inputData = ""
     databaseData = ""
 
-    with open(file2, "r") as inFile:
-        inputData = json.load(inFile)
+    # open json file
+    opening_results = device.open_json(file2)
 
-    results = simulate_validate_JSON(file2)
+    # convert to json string
+    inputData = json.dumps(opening_results[2])
 
-    if results[0]:
-        results = simulate_send_measurements(file2)
+    # call validate API by passing json string
+    results = simulate_validate_JSON(inputData)
 
-        if results[0]:
-            with open(database_file, "r") as database:
-                databaseData = json.load(database)
+    print(results)
 
-            inputData_database_are_equal = (inputData == databaseData)
+    # call REST APIs
+    rest_api_validate(inputData)
+    rest_api_send_measurements(inputData)
 
-            print(f"Are inputData and databaseData equal: {inputData_database_are_equal}")
-    else:
-        print(f"JSON file {file2} failed to validate")
-
-    for file in files:
-        rest_api_validate(file)
-
-    for file in files:
-        rest_api_send_measurements(file)
 

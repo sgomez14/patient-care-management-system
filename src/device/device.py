@@ -5,12 +5,12 @@ import json
 import os
 
 
-def send_measurements(json_file: str):  # -> List[bool, str]:
+def send_measurements(json_file: str, passing_a_file=False):  # -> List[bool, str]:
     """This function receives a JSON file and returns a list.
        The list index 0 indicates success of function and index 1 provides a status message"""
 
     # validate JSON file
-    validate_JSON_format_results: List[bool, str] = validate_JSON(json_file)
+    validate_JSON_format_results: List[bool, str] = validate_JSON(json_file, passing_a_file)
 
     if not validate_JSON_format_results[0]:
         return validate_JSON_format_results
@@ -44,79 +44,101 @@ def is_JSON_file(file: str):  # -> List[bool, str]:
             fileType = fileName[1]
 
             logging.info(f"The file extension is: {fileType}")
-            # print(f"The file extension is: {fileType}")
 
             result: bool = fileType.lower() == "json"
 
-            return [result, fileType]
+            msg = ""
+            if result:
+                msg = f"{file} file has the JSON extension"
+                logging.info(msg)
+            else:
+                msg = f"invalidFileName: \"{file}\" is not a valid file name"
+                logging.error(msg)
+
+            return [result, msg]
 
         else:
-            logging.info(f"\"{file}\" is not a valid file name")
-            # print(f"\"{file}\" is not a valid file name")
-            return [False, "invalidFileName"]
+            msg = f"invalidFileName: \"{file}\" is not a valid file name"
+            logging.error(msg)
+            return [False, msg]
 
 
-def validate_JSON(json_file: str):  # -> List[bool, str]:
+def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str]:
     """This function checks that the json adheres to the device module's json schema"""
 
-    is_JSON_file_results: List[bool, str] = is_JSON_file(json_file)
+    # this variable will contain the JSON data
+    data = {}
 
-    # check that the file is a json
-    if not is_JSON_file_results[0]:
-        warning: str = "User did not pass a json file"
-        logging.error(warning)
-        return [False, warning]
+    # check if json_file argument is a file instead of a JSON string
+    if passing_a_file:
+        is_JSON_file_results: List[bool, str] = is_JSON_file(json_file)
 
+        # check that the file is a json
+        if not is_JSON_file_results[0]:
+            warning: str = "User did not pass a json file"
+            logging.error(warning)
+            return [False, warning]
+
+        # open the json file
+        open_json_results = open_json(json_file)
+
+        if not open_json_results[0]:
+            return open_json_results
+
+        # at this stage json file opened properly, need to extract json data from opening results
+        data = open_json_results[2]
     else:
-        try:
-            with open(json_file, "r") as inFile:
+        # load the json string
+        load_json_string_results = load_json_string(json_file)
+        if not load_json_string_results[0]:
+            return load_json_string_results
 
-                # check if json file has no content
-                if os.path.getsize(json_file) == 0:
-                    msg = f"{json_file} is empty"
-                    logging.error(msg)
-                    return [False, msg]
+        # at this stage json string loaded properly, need to extract json data from loading results
+        data = load_json_string_results[2]
 
-                # read the entire json file
-                data = json.load(inFile)
+    # try:
+    #
 
-                # check primaryKeys
-                primaryKeys = list(data.keys())
-                primaryKeys_check_results = check_primary_keys(primaryKeys, data)
+    # read the entire json file
+    # data = json.load(inFile)
 
-                if not primaryKeys_check_results[0]:
-                    return primaryKeys_check_results
+    # check primaryKeys
+    primaryKeys = list(data.keys())
+    primaryKeys_check_results = check_primary_keys(primaryKeys, data)
 
-                # check measurementKeys
-                measureKeys = list(data["measurements"].keys())
-                measureKeys_check_results = check_measurement_keys(measureKeys, data)
+    if not primaryKeys_check_results[0]:
+        return primaryKeys_check_results
 
-                if not measureKeys_check_results[0]:
-                    return measureKeys_check_results
+    # check measurementKeys
+    measureKeys = list(data["measurements"].keys())
+    measureKeys_check_results = check_measurement_keys(measureKeys, data)
 
-                # check metadataKeys
-                for key in measureKeys:
-                    # pass the list of dictionaries
-                    inner_data_list = data["measurements"][key]
+    if not measureKeys_check_results[0]:
+        return measureKeys_check_results
 
-                    # check metadata keys within the inner data packet
-                    metadata_check_results = check_metadata_keys(key, inner_data_list)
+    # check metadataKeys
+    for key in measureKeys:
+        # pass the list of dictionaries
+        inner_data_list = data["measurements"][key]
 
-                    if not metadata_check_results[0]:
-                        return metadata_check_results
+        # check metadata keys within the inner data packet
+        metadata_check_results = check_metadata_keys(key, inner_data_list)
 
-                # opening JSON file successful
-                openResult = "JSON format is correct"
+        if not metadata_check_results[0]:
+            return metadata_check_results
 
-                return [True, openResult, data]
+    # opening JSON file successful
+    openResult = "JSON format is correct"
 
-        except IOError:
-            openResult = f"Error:Sorry, the file {json_file} cannot be opened." \
-                         f" Please check it exists in your directory."
+    return [True, openResult, data]
 
-            logging.error(openResult)
-
-            return [False, openResult]
+    # except IOError:
+    #     openResult = f"Error:Sorry, the file {json_file} cannot be opened." \
+    #                  f" Please check it exists in your directory."
+    #
+    #     logging.error(openResult)
+    #
+    #     return [False, openResult]
 
 
 def check_primary_keys(keys: List[str], json_data: json):  # -> List[bool, str]:
@@ -465,6 +487,51 @@ def verify_measurement_range(measurement_type: str, measurement, unit: str):  # 
     msg = f"{measurement_type} measurement of {measurement} is in valid range. MIN: {MIN}, MAX: {MAX}."
     logging.info(msg)
     return [True, msg]
+
+
+def open_json(json_file: str):  # -> List[bool, str, json object]
+
+    try:
+        with open(json_file, "r") as inFile:
+
+            # check if json file has no content
+            if os.path.getsize(json_file) == 0:
+                msg = f"{json_file} is empty"
+                logging.error(msg)
+                return [False, msg]
+
+            # read in the entire json file
+            data = json.load(inFile)
+            msg = f"Successfully opened JSON file called: {json_file}"
+            logging.info(msg)
+
+            return [True, msg, data]
+
+    except IOError:
+        openResult = f"Error:Sorry, the file {json_file} cannot be opened." \
+                     f" Please check it exists in your directory."
+        logging.error(openResult)
+        data = {"msg": openResult}
+        return [False, openResult, data]
+
+
+def load_json_string(json_string: str):  # -> List[bool, str, json object]
+    """This function loads json from a string"""
+
+    # helper code from Kite.com
+    # https://www.kite.com/python/answers/how-to-handle-json-decode-error-when-nothing-returns-in-python
+
+    try:
+        data = json.loads(json_string)
+        msg = f"Successfully loaded JSON string called: {json_string}"
+        logging.info(msg)
+        return [True, msg, data]
+
+    except json.decoder.JSONDecodeError:
+        data = {}
+        msg = "String could not be converted to JSON"
+        logging.error(msg)
+        return [False, msg, data]
 
 
 if __name__ == '__main__':

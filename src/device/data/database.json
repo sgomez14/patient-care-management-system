@@ -16,17 +16,6 @@
                 "timestamp": "2021-12-1T10:50:19",
                 "comments": "everythin good"
             }
-        ],
-        "blood_pressure": [
-            {
-                "blood_pressure": {
-                    "systolic": 120,
-                    "diastolic": 70
-                },
-                "unit": "mmHg",
-                "timestamp": "2021-12-1T10:28:19",
-                "comments": "everythin good"
-            }
         ]
     }
 }
