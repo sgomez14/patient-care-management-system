@@ -96,12 +96,6 @@ def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str]:
         # at this stage json string loaded properly, need to extract json data from loading results
         data = load_json_string_results[2]
 
-    # try:
-    #
-
-    # read the entire json file
-    # data = json.load(inFile)
-
     # check primaryKeys
     primaryKeys = list(data.keys())
     primaryKeys_check_results = check_primary_keys(primaryKeys, data)
@@ -132,27 +126,23 @@ def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str]:
 
     return [True, openResult, data]
 
-    # except IOError:
-    #     openResult = f"Error:Sorry, the file {json_file} cannot be opened." \
-    #                  f" Please check it exists in your directory."
-    #
-    #     logging.error(openResult)
-    #
-    #     return [False, openResult]
-
 
 def check_primary_keys(keys: List[str], json_data: json):  # -> List[bool, str]:
     primary_keys: List[str] = ["patientID", "deviceID", "deviceType", "measurements"]
 
     # check that json has four primary keys
     if len(keys) != len(primary_keys):
-        return [False, "Missing primary keys"]
+        msg = "Missing primary keys"
+        logging.error(msg)
+        return [False, msg]
 
     # check that key only appears once
     for key in keys:
         key_occurrence = primary_keys.count(key)
         if key_occurrence != 1:
-            return [False, f"incorrect key in data structure: {key} or it appears multiple times"]
+            msg = f"incorrect key in data structure: \"{key}\" or it appears multiple times"
+            logging.error(msg)
+            return [False, msg]
 
     # at this point we have confirmed that each key from user file matches primary keys in schema
     # now we can use the primary keys to check the data types for each key/value pair
@@ -160,12 +150,17 @@ def check_primary_keys(keys: List[str], json_data: json):  # -> List[bool, str]:
     for key in primary_keys:
         if key == "measurements":
             if not isinstance(json_data[key], dict):
-                msg = "measurements key does not have a dictionary assigned to it."
+                msg = f"measurements key does not have a dictionary assigned to it. Value provided: {json_data[key]}"
+                logging.error(msg)
+                return [False, msg]
+
+            if len(json_data[key]) == 0:
+                msg = f"measurements key's dictionary is empty. Value provided: {json_data[key]}"
                 logging.error(msg)
                 return [False, msg]
         else:
             if not isinstance(json_data[key], int):
-                msg = f"{key} key does not have an int value assigned to it."
+                msg = f"{key} key does not have an int value assigned to it. Value provided: {json_data[key]}"
                 logging.error(msg)
                 return [False, msg]
 
@@ -185,14 +180,20 @@ def check_measurement_keys(keys: List[str], json_data: json):  # -> List[bool, s
     for key in keys:
         key_occurrence = measurement_keys.count(key)
         if key_occurrence != 1:
-            msg = f"incorrect key in data structure: {key} or it appears multiple times"
+            msg = f"incorrect key in data structure: measurement key \"{key}\"  or it appears multiple times"
             logging.error(msg)
             return [False, msg]
 
         # first index into measurements dictionary and then index by each key within the measurements dictionary
         # each measurement key needs to have a list
         if not isinstance(json_data[measure_key][key], list):
-            msg = f"{key} key does not have a list value assigned to it."
+            msg = f"{key} key does not have a list value assigned to it. Value provided: {json_data[measure_key][key]}"
+            logging.error(msg)
+            return [False, msg]
+
+        # check that list is not empty
+        if len(json_data[measure_key][key]) == 0:
+            msg = f"{key} key has an empty list assigned to it. Value provided: {json_data[measure_key][key]}"
             logging.error(msg)
             return [False, msg]
 
@@ -209,12 +210,34 @@ def check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[bool
         # grab the keys within the dictionary
         metaKeys = list(data_dict.keys())
 
+        # check that inner data packet has correct number of keys
+        expected_num_keys = 1+len(metadata_keys)
+        if len(metaKeys) != expected_num_keys:
+            msg = f"Incorrect number of inner data keys. Expected {expected_num_keys} keys," \
+                  f" but received {len(metaKeys)} keys."
+            logging.error(msg)
+            return [False, msg]
+
         # measurement_key must be present in inner data packet
         measurement_key_occurrence = metaKeys.count(measurement_key)
         if measurement_key_occurrence != 1:
             msg = f"{measurement_key} measurement key is not in inner data packet."
             logging.error(msg)
             return [False, msg]
+
+        # remove measurement_key temporarily to check metadata_keys are correct
+        metaKeys.remove(measurement_key)
+        for key in metaKeys:
+            key_occurrence = metadata_keys.count(key)
+            if key_occurrence != 1:
+                logging.error("error is happening in check_metadata_keys")
+                msg = f"key: {key}, key_occurrence: {key_occurrence}, it must once, or this key is not supported." \
+                      f"supported metadata_keys are: {metadata_keys}"
+                logging.error(msg)
+                return [False, msg]
+
+        # reinsert measurement key into list
+        metaKeys.append(measurement_key)
 
         # check that keys for blood_pressure dictionary are named systolic and diastolic
         if measurement_key == "blood_pressure":
@@ -236,22 +259,15 @@ def check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[bool
         # verify the measurement values attached to the inner data packet measurement key
         measurement = data_dict[measurement_key]
         unit = data_dict["unit"]
-        verify_measurement_range_results = verify_measurement_range(measurement_key,measurement, unit)
+        verify_measurement_range_results = verify_measurement_range(measurement_key, measurement, unit)
         if not verify_measurement_range_results[0]:
             return verify_measurement_range_results
 
         # confirmed that measurement_key is in inner data packet, now can safely remove & continue checking other keys
         metaKeys.remove(measurement_key)
 
-        # check that metadata keys only occur once within the inner data packet, and validate values
+        # validate metadata keys values
         for key in metaKeys:
-            key_occurrence = metadata_keys.count(key)
-            if key_occurrence != 1:
-                logging.error("error is happening in check_metadata_keys")
-                msg = f"key: {key}, key_occurrence: {key_occurrence}, it should only occur once"
-                logging.error(msg)
-                return [False, msg]
-
             # checking timestamp value
             if key == "timestamp":
                 verify_timestamp_result = verify_timestamp(data_dict[key])

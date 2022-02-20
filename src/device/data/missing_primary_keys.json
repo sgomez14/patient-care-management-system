@@ -1,0 +1,12 @@
+{
+    "measurements": {
+        "weight": [
+            {
+                "weight": 200,
+                "unit": "lbs",
+                "timestamp": "2021-12-1",
+                "comments": "everythin good"
+            }
+        ]
+    }
+}
