@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask  # , jsonify
 from flask_restful import Api, Resource
 import device
 
