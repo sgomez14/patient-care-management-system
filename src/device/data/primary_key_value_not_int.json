@@ -1,0 +1,15 @@
+{
+    "patientID": "santiago",
+    "deviceID": 9876,
+    "deviceType": 1,
+    "measurements": {
+        "weight": [
+            {
+                "weight": 200,
+                "unit": "lbs",
+                "timestamp": "2021-12-1",
+                "comments": "everythin good"
+            }
+        ]
+    }
+}

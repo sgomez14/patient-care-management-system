@@ -1,0 +1,10 @@
+{
+    "patientID": 1234,
+    "deviceID": 9876,
+    "deviceType": 1,
+    "measurements": {
+        "temperature": [
+
+        ]
+    }
+}

@@ -3,7 +3,7 @@
     "deviceID": 9876,
     "deviceType": 1,
     "measurements": {
-        "temperature": [
+        "santiago": [
             {
                 "temperature": 99,
                 "unit": "F",

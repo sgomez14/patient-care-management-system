@@ -5,6 +5,7 @@
     "measurements": {
         "temperature": [
             {
+                "santiago": "helloWorld",
                 "temperature": 99,
                 "unit": "F",
                 "timestamp": "2021-12-1T10:28:19",
