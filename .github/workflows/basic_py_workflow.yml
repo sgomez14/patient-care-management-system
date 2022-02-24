@@ -47,4 +47,5 @@ jobs:
 #  disable pytest          
       - name: Test with pytest
         run: |
+           cd /home/runner/work/patient-care-management-system/patient-care-management-system/src/device
            pytest src/device/device_test.py
