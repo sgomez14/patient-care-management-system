@@ -47,5 +47,8 @@ jobs:
 #  disable pytest          
       - name: Test with pytest
         run: |
+           # change the working directory to where pytest is located
            cd /home/runner/work/patient-care-management-system/patient-care-management-system/src/device
+
+          # indicate where pytest is located
            pytest /home/runner/work/patient-care-management-system/patient-care-management-system/src/device/device_test.py
