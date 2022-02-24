@@ -2,16 +2,16 @@ import device
 import json
 
 
-# def test_send_measurements_temp_json_file() -> None:
-#     """Tests that JSON containing only temperature data has all correct keys"""
-#
-#     input_file = "data/tempJSON.json"
-#
-#     results = device.send_measurements(input_file, True)
-#
-#     API_success: bool = results[0]
-#
-#     assert API_success
+def test_send_measurements_temp_json_file() -> None:
+    """Tests that JSON containing only temperature data has all correct keys"""
+
+    input_file = "data/tempJSON.json"
+
+    results = device.send_measurements(input_file, True)
+
+    API_success: bool = results[0]
+
+    assert API_success
 
 
 # def test_validate_temp_json_file() -> None:
