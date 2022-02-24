@@ -3,7 +3,11 @@
 
 name: Python package
 
-on: [push]
+on: 
+  push:
+    branches: [main, device]
+  pull_request: 
+    branches: [main]
 
 jobs:
   build:
@@ -41,6 +45,6 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
           
 #  disable pytest          
-#       - name: Test with pytest
-#         run: |
-#            pytest
+      - name: Test with pytest
+        run: |
+           pytest src/device/device_test.py

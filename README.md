@@ -7,3 +7,5 @@ Documentation is maintained in this repository's [wiki section](https://github.c
 > [Branching Strategy](https://github.com/sgomez14/patient-care-management-system/wiki/Branching-Strategy) 
 >
 > [Device Measurement Data Packet Structure](https://github.com/sgomez14/patient-care-management-system/wiki/Device-Measurement-Data-Packet)
+>
+> [Device Interface API](https://github.com/sgomez14/patient-care-management-system/wiki/Device-Interface-API)
