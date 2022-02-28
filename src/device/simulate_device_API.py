@@ -3,6 +3,7 @@ import json
 import requests
 
 BASE = "http://127.0.0.1:5000/"
+BASE = "http://devicerestfulapi-env.eba-humt53mj.us-east-1.elasticbeanstalk.com/"
 
 def simulate_send_measurements(json_file: str):  # -> List[bool, str]
 
