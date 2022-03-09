@@ -588,7 +588,8 @@ def is_device_registered(device_id: int, flask_path=False):  # -> List[bool, str
     database = "data/registered_devices.json"
 
     if flask_path:
-        database = os.path.join(flask_path, "data", "registered_devices.json")
+        database = os.path.join(flask_path, "patient-care-management-system",
+                                "src", "device", "data", "registered_devices.json")
 
     # connect to database, which is a json at this stage in module development
     json_open_results = _open_json(database)
