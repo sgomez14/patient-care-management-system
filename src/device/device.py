@@ -755,7 +755,7 @@ def _write_json_file(file_name: str, json_data: dict):  # -> List[bool, str]
 
     # check if json data passed is a dictionary
     if not isinstance(json_data, dict):
-        msg = f"Writing to JSON file: json data passed is not a dictionary."
+        msg = "Writing to JSON file: json data passed is not a dictionary."
         logging.error(msg)
         return [False, msg]
 
