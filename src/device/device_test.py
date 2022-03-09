@@ -7,7 +7,7 @@ def test_send_measurements_temp_json_file() -> None:
 
     input_file = "data/tempJSON.json"
 
-    results = device.send_measurements(input_file, True)
+    results = device.send_measurements(input_file, passing_a_file=True)
 
     API_success: bool = results[0]
 
@@ -19,7 +19,7 @@ def test_validate_temp_json_file() -> None:
 
     input_file = "data/tempJSON.json"
 
-    results = device.validate_JSON(input_file, True)
+    results = device.validate_JSON(input_file, passing_a_file=True)
 
     API_success: bool = results[0]
 
@@ -31,7 +31,7 @@ def test_validate_temp_bp_json_file() -> None:
 
     input_file = "data/temp_bp.json"
 
-    results = device.validate_JSON(input_file, True)
+    results = device.validate_JSON(input_file, passing_a_file=True)
 
     API_success: bool = results[0]
 

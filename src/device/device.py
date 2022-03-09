@@ -6,12 +6,12 @@ import os
 import enum
 
 
-def send_measurements(json_file: str, passing_a_file=False):  # -> List[bool, str]:
+def send_measurements(json_file: str, flask_path=False, passing_a_file=False):  # -> List[bool, str]:
     """This function receives a JSON file and returns a list.
        The list index 0 indicates success of function and index 1 provides a status message"""
 
     # validate JSON file
-    validate_JSON_format_results: List[bool, str] = validate_JSON(json_file, passing_a_file)
+    validate_JSON_format_results: List[bool, str] = validate_JSON(json_file, flask_path=flask_path, passing_a_file=passing_a_file)
 
     if not validate_JSON_format_results[0]:
         return validate_JSON_format_results
@@ -38,7 +38,6 @@ def _is_JSON_file(file: str):  # -> List[bool, str]:
         if len(fileName) > 1:
 
             logging.info(f"User passed \"{file}\" as file name.")
-            # print(f"User passed \"{file}\" as file name.")
 
             # extract the file type
             fileType = fileName[1]
@@ -63,7 +62,7 @@ def _is_JSON_file(file: str):  # -> List[bool, str]:
             return [False, msg]
 
 
-def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str]:
+def validate_JSON(json_file: str, flask_path=False, passing_a_file=False):  # -> List[bool, str]:
     """This function checks that the json adheres to the device module's json schema"""
 
     # this variable will contain the JSON data
@@ -88,9 +87,13 @@ def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str]:
         # at this stage json file opened properly, need to extract json data from opening results
         data = open_json_results[2]
     else:
+
         # load the json string
         load_json_string_results = _load_json_string(json_file)
         if not load_json_string_results[0]:
+            msg = f"{load_json_string_results[1]} | validate_json: Received error loading json string"
+            load_json_string_results[1] = msg
+            logging.error(msg)
             return load_json_string_results
 
         # at this stage json string loaded properly, need to extract json data from loading results
@@ -104,7 +107,10 @@ def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str]:
         return primaryKeys_check_results
 
     # check if device is registered
-    check_device_registered_result = is_device_registered(data["deviceID"])
+    if flask_path != 0:
+        check_device_registered_result = is_device_registered(data["deviceID"], flask_path)
+    else:
+        check_device_registered_result = is_device_registered(data["deviceID"])
 
     if not check_device_registered_result[0]:
         return check_device_registered_result
@@ -546,13 +552,13 @@ def _load_json_string(json_string: str):  # -> List[bool, str, json object]
 
     try:
         data = json.loads(json_string)
-        msg = f"Successfully loaded JSON string called: {json_string}"
+        msg = f"_load_json_string: Successfully loaded JSON string called: {json_string}"
         logging.info(msg)
         return [True, msg, data]
 
     except json.decoder.JSONDecodeError:
         data = {}
-        msg = "String could not be converted to JSON"
+        msg = "_load_json_string: String could not be converted to JSON"
         logging.error(msg)
         return [False, msg, data]
 
@@ -565,7 +571,7 @@ class EditDevice(enum.Enum):
     REMOVE = 2
 
 
-def is_device_registered(device_id: int):  # -> List[bool, str]
+def is_device_registered(device_id: int, flask_path=False):  # -> List[bool, str]
     """This function checks if a device is registered.
     Returns true if the device is registered, otherwise false.
     Debugging message is also included.
@@ -580,6 +586,9 @@ def is_device_registered(device_id: int):  # -> List[bool, str]
         return [result, msg]
 
     database = "data/registered_devices.json"
+
+    if flask_path:
+        database = os.path.join(flask_path, "data", "registered_devices.json")
 
     # connect to database, which is a json at this stage in module development
     json_open_results = _open_json(database)
@@ -778,11 +787,11 @@ def _write_json_file(file_name: str, json_data: dict):  # -> List[bool, str]
 if __name__ == '__main__':
     file = "data/tempJSON.json"
     # placeholder for testing device.py
-    # print(send_measurements(file))
+    print(send_measurements(file, passing_a_file=True))
 
     # print(verify_measurement_range("temperature", 98, "F"))
     # print(verify_measurement_range("temperature", 200, "F"))
 
-    print(register_device(123))
-    print(register_device(1))
-    print(remove_device(1))
+    # print(register_device(123))
+    # print(register_device(1))
+    # print(remove_device(1))

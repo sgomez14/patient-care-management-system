@@ -11,6 +11,8 @@ api = Api(application)
 
 data_directory: str = "data/"
 
+flask_path = application.instance_path
+
 
 class HomePage(Resource):
     def get(self):
@@ -21,26 +23,31 @@ class HomePage(Resource):
 class ValidateJSON(Resource):
     def get(self, json_file):
         # path: str = data_directory + json_file
-        validate_result = device.validate_JSON(json_file)
+        print(flask_path)
+        validate_result = device.validate_JSON(json_file, flask_path=flask_path)
         return {"result": validate_result[0],
                 "message": validate_result[1],
-                "data": json_file}
+                "data": json_file,
+                "flask_path": flask_path}
 
 
 class SendMeasurements(Resource):
     def get(self, json_file):
         # path: str = data_directory + json_file
-        send_measurements_result = device.validate_JSON(json_file)
+        print(flask_path)
+        send_measurements_result = device.validate_JSON(json_file, flask_path=flask_path)
         return {"result": send_measurements_result[0],
                 "message": send_measurements_result[1],
-                "path": json_file}
+                "path": json_file,
+                "flask_path": flask_path}
 
     def post(self, json_file):
         # path: str = data_directory + json_file
-        send_measurements_result = device.validate_JSON(json_file)
+        send_measurements_result = device.send_measurements(json_file, flask_path=flask_path)
         return {"result": send_measurements_result[0],
                 "message": send_measurements_result[1],
-                "path": json_file}
+                "path": json_file,
+                "flask_path": flask_path}
 
 
 api.add_resource(HomePage, "/")
