@@ -26,7 +26,6 @@ def is_JSON_file(file: str):  # -> List[bool, str]:
     """Returns file type as string else it returns invalidFileName"""
 
     logging.info("Determining file type.")
-    # print("Determining file type.")
 
     # checking if the argument passed is a string
     if isinstance(file, str):
@@ -102,6 +101,12 @@ def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str]:
 
     if not primaryKeys_check_results[0]:
         return primaryKeys_check_results
+
+    # check if device is registered
+    check_device_registered_result = is_device_registered(data["deviceID"])
+
+    if not check_device_registered_result[0]:
+        return check_device_registered_result
 
     # check measurementKeys
     measureKeys = list(data["measurements"].keys())
@@ -550,10 +555,156 @@ def load_json_string(json_string: str):  # -> List[bool, str, json object]
         return [False, msg, data]
 
 
+def is_device_registered(device_id: int):  # -> List[bool, str]
+    """This function checks if a device is registered.
+    Returns true if the device is registered, otherwise false.
+    Debugging message is also included.
+    """
+    msg = ""
+    result = False
+
+    # check if device_id is an int
+    if not isinstance(device_id, int):
+        msg = f"Checking if device registered: device_id \"{device_id}\" is not an int."
+        logging.error(msg)
+        return [result, msg]
+
+    database = "data/registered_devices.json"
+
+    # connect to database, which is a json at this stage in module development
+    json_open_results = open_json(database)
+
+    # check if the open did not work
+    if not json_open_results[0]:
+        return json_open_results
+
+    # the json data is the 3 element in the list returned by open_json
+    # the json has the device IDs in a list that is paired to key "device_ids"
+    registered_devices = json_open_results[2]["device_ids"]
+
+    if device_id not in registered_devices:
+        msg = f"Checking device registration: Device \"{device_id}\" is not registered."
+        logging.info(msg)
+    else:
+        result = True
+        msg = f"Checking device registration: Device \"{device_id}\" is registered."
+        logging.info(msg)
+
+    return [result, msg]
+
+
+def register_device(device_id: int):  # -> List[bool, str]
+    """This function registers a device.
+    Returns true if the device is registers, otherwise false.
+    Debugging message is also included.
+    """
+
+    msg = ""
+    result = False
+
+    # check if device_id is an int
+    if not isinstance(device_id, int):
+        msg = f"Registering Device: device_id \"{device_id}\" is not an int."
+        logging.error(msg)
+        return [result, msg]
+
+    is_device_registered_result = is_device_registered(device_id)
+    total_result_items = len(is_device_registered_result)
+
+    # failing due to file IO can be detected if the total items in the result is greater than 2
+    reg_check_failed_due_to_fileIO = total_result_items > 2
+
+    # check if the device check failed due to file IO
+    if not is_device_registered_result[0] and reg_check_failed_due_to_fileIO:
+        return is_device_registered_result
+
+    # check if the device is already registered
+    elif is_device_registered_result[0]:
+        msg = f"Registering Device: Device \"{device_id}\" is already registered."
+        logging.error(msg)
+        return [False, msg]
+
+    # write device to database
+    writing_result = write_device_to_database(device_id)
+
+    if not writing_result[0]:
+        return writing_result
+
+    # write to database successful
+    result = True
+    msg = f"Registering Device: Device \"{device_id}\" registered successfully."
+    logging.info(msg)
+
+    return [result, msg]
+
+
+def write_device_to_database(device_id: int):  # -> List[bool, str]
+    """This function writes the device into the database"""
+
+    database = "data/registered_devices.json"
+
+    # connect to database, which is a json at this stage in module development
+    json_open_results = open_json(database)
+
+    # check if the json file opened corrected
+    if not json_open_results[0]:
+        return json_open_results
+
+    # grab the json with the device info
+    devices = json_open_results[2]
+
+    # add the device to the list of device_ids
+    devices["device_ids"].append(device_id)
+
+    # update number of devices
+    devices["total_devices"] = len(devices["device_ids"])
+
+    writing_result = write_json_file(database, devices)
+
+    return writing_result
+
+
+def write_json_file(file_name: str, json_data: dict):  # -> List[bool, str]
+    """This function writes json data to a json file."""
+
+    # check if file name passed is a string
+    # if not isinstance(file_name, str):
+    #     msg = f"Writing to JSON file: file name \"{file_name}\" is not a string."
+    #     logging.error(msg)
+    #     return [False, msg]
+
+    is_json_file_result = is_JSON_file(file_name)
+    if not is_json_file_result[0]:
+        return is_json_file_result
+
+    # check if json data passed is a dictionary
+    if not isinstance(json_data, dict):
+        msg = f"Writing to JSON file: json data passed is not a dictionary."
+        logging.error(msg)
+        return [False, msg]
+
+    try:
+        with open(file_name, "w") as json_file:
+
+            # read in the entire json file
+            json.dump(json_data, json_file, indent=4)
+            msg = f"Writing to JSON file: Successfully wrote to  JSON file called: {file_name}"
+            logging.info(msg)
+
+            return [True, msg]
+
+    except IOError:
+        openResult = f"Writing to JSON file: Sorry, the file \"{file_name}\" cannot be opened for writing."
+        logging.error(openResult)
+        return [False, openResult]
+
+
 if __name__ == '__main__':
     file = "data/tempJSON.json"
     # placeholder for testing device.py
     # print(send_measurements(file))
 
-    print(verify_measurement_range("temperature", 98, "F"))
-    print(verify_measurement_range("temperature", 200, "F"))
+    # print(verify_measurement_range("temperature", 98, "F"))
+    # print(verify_measurement_range("temperature", 200, "F"))
+
+    print(register_device(123))

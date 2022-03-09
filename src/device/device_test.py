@@ -444,3 +444,33 @@ def test_validate_inner_data_comment_not_string() -> None:
     API_success: bool = all(results)
 
     assert not API_success
+
+
+def test_is_device_registered() -> None:
+    """Test the function that checks if a device is registered."""
+
+    devices_to_check = [9876, 1000, 1]
+    expected_results = [True, True, False]
+
+    check_results = []
+
+    for dev in devices_to_check:
+        result = device.is_device_registered(dev)
+        check_results.append(result[0])
+
+    assert check_results == expected_results
+
+
+def test_register_devices_already_registered() -> None:
+    """Test the function that registers devices."""
+
+    devices_already_registered = [9876, 1000]
+    expected_results = [False, False]
+
+    check_results = []
+
+    for dev in devices_already_registered:
+        result = device.register_device(dev)
+        check_results.append(result[0])
+
+    assert check_results == expected_results
