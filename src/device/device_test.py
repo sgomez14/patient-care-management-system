@@ -58,7 +58,7 @@ def test_validate_json_string() -> None:
 
     for file in files:
         # open a json file stored in data directory
-        opening_results = device.open_json(file)
+        opening_results = device._open_json(file)
 
         # convert json object to json string
         inputData = json.dumps(opening_results[2])
@@ -94,7 +94,7 @@ def test_validate_incorrect_timestamp() -> None:
 
     for file in files:
         # open a json file stored in data directory
-        opening_results = device.open_json(file)
+        opening_results = device._open_json(file)
 
         # convert json object to json string
         inputData = json.dumps(opening_results[2])
@@ -118,7 +118,7 @@ def test_validate_missing_primary_keys() -> None:
 
     for file in files:
         # open a json file stored in data directory
-        opening_results = device.open_json(file)
+        opening_results = device._open_json(file)
 
         # convert json object to json string
         inputData = json.dumps(opening_results[2])
@@ -142,7 +142,7 @@ def test_validate_duplicate_primary_keys() -> None:
 
     for file in files:
         # open a json file stored in data directory
-        opening_results = device.open_json(file)
+        opening_results = device._open_json(file)
 
         # convert json object to json string
         inputData = json.dumps(opening_results[2])
@@ -166,7 +166,7 @@ def test_validate_incorrect_primary_keys() -> None:
 
     for file in files:
         # open a json file stored in data directory
-        opening_results = device.open_json(file)
+        opening_results = device._open_json(file)
 
         # convert json object to json string
         inputData = json.dumps(opening_results[2])
@@ -190,7 +190,7 @@ def test_validate_incorrect_primary_keys_value() -> None:
 
     for file in files:
         # open a json file stored in data directory
-        opening_results = device.open_json(file)
+        opening_results = device._open_json(file)
 
         # convert json object to json string
         inputData = json.dumps(opening_results[2])
@@ -214,7 +214,7 @@ def test_validate_incorrect_primary_keys_value() -> None:
 
     for file in files:
         # open a json file stored in data directory
-        opening_results = device.open_json(file)
+        opening_results = device._open_json(file)
 
         # convert json object to json string
         inputData = json.dumps(opening_results[2])
@@ -238,7 +238,7 @@ def test_validate_primary_key_measure_value_not_dict() -> None:
 
     for file in files:
         # open a json file stored in data directory
-        opening_results = device.open_json(file)
+        opening_results = device._open_json(file)
 
         # convert json object to json string
         inputData = json.dumps(opening_results[2])
@@ -262,7 +262,7 @@ def test_validate_primary_key_measure_empty_dict() -> None:
 
     for file in files:
         # open a json file stored in data directory
-        opening_results = device.open_json(file)
+        opening_results = device._open_json(file)
 
         # convert json object to json string
         inputData = json.dumps(opening_results[2])
@@ -286,7 +286,7 @@ def test_validate_invalid_measurement_key() -> None:
 
     for file in files:
         # open a json file stored in data directory
-        opening_results = device.open_json(file)
+        opening_results = device._open_json(file)
 
         # convert json object to json string
         inputData = json.dumps(opening_results[2])
@@ -310,7 +310,7 @@ def test_validate_measurement_key_value_not_list() -> None:
 
     for file in files:
         # open a json file stored in data directory
-        opening_results = device.open_json(file)
+        opening_results = device._open_json(file)
 
         # convert json object to json string
         inputData = json.dumps(opening_results[2])
@@ -334,7 +334,7 @@ def test_validate_measurement_key_value_list_empty() -> None:
 
     for file in files:
         # open a json file stored in data directory
-        opening_results = device.open_json(file)
+        opening_results = device._open_json(file)
 
         # convert json object to json string
         inputData = json.dumps(opening_results[2])
@@ -358,7 +358,7 @@ def test_validate_inner_data_incorrect_num_keys() -> None:
 
     for file in files:
         # open a json file stored in data directory
-        opening_results = device.open_json(file)
+        opening_results = device._open_json(file)
 
         # convert json object to json string
         inputData = json.dumps(opening_results[2])
@@ -382,7 +382,7 @@ def test_validate_inner_data_incorrect_measurement_key() -> None:
 
     for file in files:
         # open a json file stored in data directory
-        opening_results = device.open_json(file)
+        opening_results = device._open_json(file)
 
         # convert json object to json string
         inputData = json.dumps(opening_results[2])
@@ -406,7 +406,7 @@ def test_validate_inner_data_incorrect_metadata_key() -> None:
 
     for file in files:
         # open a json file stored in data directory
-        opening_results = device.open_json(file)
+        opening_results = device._open_json(file)
 
         # convert json object to json string
         inputData = json.dumps(opening_results[2])
@@ -430,7 +430,7 @@ def test_validate_inner_data_comment_not_string() -> None:
 
     for file in files:
         # open a json file stored in data directory
-        opening_results = device.open_json(file)
+        opening_results = device._open_json(file)
 
         # convert json object to json string
         inputData = json.dumps(opening_results[2])
@@ -472,5 +472,59 @@ def test_register_devices_already_registered() -> None:
     for dev in devices_already_registered:
         result = device.register_device(dev)
         check_results.append(result[0])
+
+    assert check_results == expected_results
+
+
+def test_remove_device_not_registered() -> None:
+    """Test remove function with device not registered"""
+
+    devices_to_remove = [1]
+
+    expected_results = [False]
+
+    check_results = []
+
+    for dev in devices_to_remove:
+        result = device.remove_device(dev)
+        check_results.append(result[0])
+
+    assert check_results == expected_results
+
+
+def test_remove_device_registered() -> None:
+    """Test remove function with device that is registered"""
+
+    devices_to_remove = [123]
+
+    expected_results = [True]
+
+    check_results = []
+
+    for dev in devices_to_remove:
+        result = device.remove_device(dev)
+        check_results.append(result[0])
+
+    for dev in devices_to_remove:
+        device.register_device(dev)
+
+    assert check_results == expected_results
+
+
+def test_registering_unregistered_device() -> None:
+    """Test registering a device that is not currently registered"""
+
+    devices_to_register = [1]
+
+    expected_results = [True]
+
+    check_results = []
+
+    for dev in devices_to_register:
+        result = device.register_device(dev)
+        check_results.append(result[0])
+
+    for dev in devices_to_register:
+        device.remove_device(dev)
 
     assert check_results == expected_results

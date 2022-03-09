@@ -3,6 +3,7 @@ from datetime import datetime
 import logging
 import json
 import os
+import enum
 
 
 def send_measurements(json_file: str, passing_a_file=False):  # -> List[bool, str]:
@@ -17,12 +18,12 @@ def send_measurements(json_file: str, passing_a_file=False):  # -> List[bool, st
 
     # write json data to database
     json_data = validate_JSON_format_results[2]
-    database_write_result = write_to_database(json_data)
+    database_write_result = _write_to_database(json_data)
 
     return database_write_result
 
 
-def is_JSON_file(file: str):  # -> List[bool, str]:
+def _is_JSON_file(file: str):  # -> List[bool, str]:
     """Returns file type as string else it returns invalidFileName"""
 
     logging.info("Determining file type.")
@@ -70,7 +71,7 @@ def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str]:
 
     # check if json_file argument is a file instead of a JSON string
     if passing_a_file:
-        is_JSON_file_results: List[bool, str] = is_JSON_file(json_file)
+        is_JSON_file_results: List[bool, str] = _is_JSON_file(json_file)
 
         # check that the file is a json
         if not is_JSON_file_results[0]:
@@ -79,7 +80,7 @@ def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str]:
             return [False, warning]
 
         # open the json file
-        open_json_results = open_json(json_file)
+        open_json_results = _open_json(json_file)
 
         if not open_json_results[0]:
             return open_json_results
@@ -88,7 +89,7 @@ def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str]:
         data = open_json_results[2]
     else:
         # load the json string
-        load_json_string_results = load_json_string(json_file)
+        load_json_string_results = _load_json_string(json_file)
         if not load_json_string_results[0]:
             return load_json_string_results
 
@@ -97,7 +98,7 @@ def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str]:
 
     # check primaryKeys
     primaryKeys = list(data.keys())
-    primaryKeys_check_results = check_primary_keys(primaryKeys, data)
+    primaryKeys_check_results = _check_primary_keys(primaryKeys, data)
 
     if not primaryKeys_check_results[0]:
         return primaryKeys_check_results
@@ -110,7 +111,7 @@ def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str]:
 
     # check measurementKeys
     measureKeys = list(data["measurements"].keys())
-    measureKeys_check_results = check_measurement_keys(measureKeys, data)
+    measureKeys_check_results = _check_measurement_keys(measureKeys, data)
 
     if not measureKeys_check_results[0]:
         return measureKeys_check_results
@@ -121,7 +122,7 @@ def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str]:
         inner_data_list = data["measurements"][key]
 
         # check metadata keys within the inner data packet
-        metadata_check_results = check_metadata_keys(key, inner_data_list)
+        metadata_check_results = _check_metadata_keys(key, inner_data_list)
 
         if not metadata_check_results[0]:
             return metadata_check_results
@@ -132,7 +133,7 @@ def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str]:
     return [True, openResult, data]
 
 
-def check_primary_keys(keys: List[str], json_data: json):  # -> List[bool, str]:
+def _check_primary_keys(keys: List[str], json_data: json):  # -> List[bool, str]:
     primary_keys: List[str] = ["patientID", "deviceID", "deviceType", "measurements"]
 
     # check that json has four primary keys
@@ -173,7 +174,7 @@ def check_primary_keys(keys: List[str], json_data: json):  # -> List[bool, str]:
     return [True, "all keys correct with corresponding value type"]
 
 
-def check_measurement_keys(keys: List[str], json_data: json):  # -> List[bool, str]:
+def _check_measurement_keys(keys: List[str], json_data: json):  # -> List[bool, str]:
     """This function verifies the keys and values in measurements data structure"""
 
     # measure_key is the string for the name of the measurements key
@@ -206,7 +207,7 @@ def check_measurement_keys(keys: List[str], json_data: json):  # -> List[bool, s
     return [True, "all measurement keys are valid and have an accompanying list"]
 
 
-def check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[bool, str]:
+def _check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[bool, str]:
     metadata_keys: List[str] = ["unit", "timestamp", "comments"]
 
     # each measurement_key will have a list that can contain
@@ -264,7 +265,7 @@ def check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[bool
         # verify the measurement values attached to the inner data packet measurement key
         measurement = data_dict[measurement_key]
         unit = data_dict["unit"]
-        verify_measurement_range_results = verify_measurement_range(measurement_key, measurement, unit)
+        verify_measurement_range_results = _verify_measurement_range(measurement_key, measurement, unit)
         if not verify_measurement_range_results[0]:
             return verify_measurement_range_results
 
@@ -275,14 +276,14 @@ def check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[bool
         for key in metaKeys:
             # checking timestamp value
             if key == "timestamp":
-                verify_timestamp_result = verify_timestamp(data_dict[key])
+                verify_timestamp_result = _verify_timestamp(data_dict[key])
 
                 if not verify_timestamp_result[0]:
                     return verify_timestamp_result
 
             # checking unit value
             elif key == "unit":
-                verify_units_result = verify_units(measurement_key, data_dict[key])
+                verify_units_result = _verify_units(measurement_key, data_dict[key])
 
                 if not verify_units_result[0]:
                     return verify_units_result
@@ -299,7 +300,7 @@ def check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[bool
     return [True, msg]
 
 
-def write_to_database(json_data: json):  # -> List[bool, str]:
+def _write_to_database(json_data: json):  # -> List[bool, str]:
     database: str = "data/database.json"
     try:
         with open(database, "w") as json_file:
@@ -316,7 +317,7 @@ def write_to_database(json_data: json):  # -> List[bool, str]:
         return [False, message]
 
 
-def verify_units(measurement_key: str, unit: str):  # -> List[bool, str]
+def _verify_units(measurement_key: str, unit: str):  # -> List[bool, str]
     supported_measurements = ["temperature", "blood_pressure", "pulse", "oximeter",
                               "weight", "glucometer"]
 
@@ -376,7 +377,7 @@ def verify_units(measurement_key: str, unit: str):  # -> List[bool, str]
         return [False, msg]
 
 
-def verify_timestamp(timestamp: str):  # -> List[bool, str]
+def _verify_timestamp(timestamp: str):  # -> List[bool, str]
     """This function verifies that timestamp adheres to ISO 8601 standard"""
 
     iso8601_format: str = "%Y-%m-%dT%H:%M:%S"
@@ -404,7 +405,7 @@ def verify_timestamp(timestamp: str):  # -> List[bool, str]
         return [False, msg]
 
 
-def verify_measurement_range(measurement_type: str, measurement, unit: str):  # -> List[bool, str]
+def _verify_measurement_range(measurement_type: str, measurement, unit: str):  # -> List[bool, str]
     # lowest temp: https://www.guinnessworldrecords.com/world-records/67747-lowest-body-temperature
     # highest temp: https://www.npr.org/sections/goatsandsoda/2014/11/14/364060441/you-might-be-surprised-when-you-take-your-temperature
 
@@ -438,7 +439,7 @@ def verify_measurement_range(measurement_type: str, measurement, unit: str):  # 
         return [False, msg]
 
     # check that the units are correct
-    verify_units_result = verify_units(measurement_type, unit)
+    verify_units_result = _verify_units(measurement_type, unit)
     if not verify_units_result[0]:
         return verify_units_result
 
@@ -510,7 +511,8 @@ def verify_measurement_range(measurement_type: str, measurement, unit: str):  # 
     return [True, msg]
 
 
-def open_json(json_file: str):  # -> List[bool, str, json object]
+def _open_json(json_file: str):  # -> List[bool, str, dictionary/json object]
+    """This function opens a json file and returns the data as a dictionary"""
 
     try:
         with open(json_file, "r") as inFile:
@@ -536,7 +538,7 @@ def open_json(json_file: str):  # -> List[bool, str, json object]
         return [False, openResult, data]
 
 
-def load_json_string(json_string: str):  # -> List[bool, str, json object]
+def _load_json_string(json_string: str):  # -> List[bool, str, json object]
     """This function loads json from a string"""
 
     # helper code from Kite.com
@@ -553,6 +555,14 @@ def load_json_string(json_string: str):  # -> List[bool, str, json object]
         msg = "String could not be converted to JSON"
         logging.error(msg)
         return [False, msg, data]
+
+
+# Using enums
+# https://www.geeksforgeeks.org/enum-in-python/
+class EditDevice(enum.Enum):
+    REGISTER = 0
+    UPDATE = 1
+    REMOVE = 2
 
 
 def is_device_registered(device_id: int):  # -> List[bool, str]
@@ -572,7 +582,7 @@ def is_device_registered(device_id: int):  # -> List[bool, str]
     database = "data/registered_devices.json"
 
     # connect to database, which is a json at this stage in module development
-    json_open_results = open_json(database)
+    json_open_results = _open_json(database)
 
     # check if the open did not work
     if not json_open_results[0]:
@@ -625,7 +635,7 @@ def register_device(device_id: int):  # -> List[bool, str]
         return [False, msg]
 
     # write device to database
-    writing_result = write_device_to_database(device_id)
+    writing_result = _edit_device_database(device_id, EditDevice.REGISTER)
 
     if not writing_result[0]:
         return writing_result
@@ -638,33 +648,99 @@ def register_device(device_id: int):  # -> List[bool, str]
     return [result, msg]
 
 
-def write_device_to_database(device_id: int):  # -> List[bool, str]
-    """This function writes the device into the database"""
+def remove_device(device_id: int):  # -> List[bool, str]
+    """This function removes device from database."""
 
+    is_device_registered_result = is_device_registered(device_id)
+    total_result_items = len(is_device_registered_result)
+
+    # failing due to file IO can be detected if the total items in the result is greater than 2
+    reg_check_failed_due_to_fileIO = total_result_items > 2
+
+    # check if the device check failed due to file IO
+    if not is_device_registered_result[0] and reg_check_failed_due_to_fileIO:
+        return is_device_registered_result
+
+    # check if the device is already registered
+    elif not is_device_registered_result[0] and not reg_check_failed_due_to_fileIO:
+        msg = f"Removing Device: Device \"{device_id}\" is not registered."
+        logging.error(msg)
+        return [False, msg]
+
+    # remove device from database
+    remove_result = _edit_device_database(device_id, EditDevice.REMOVE)
+
+    # check if the remove operation was successful
+    if not remove_result[0]:
+        return remove_result
+
+    # remove operation was successful
+    msg = f"Removing Device: Device \"{device_id}\" is successfully removed."
+    logging.info(msg)
+    return [True, msg]
+
+
+def _edit_device_database(device_id: int, operation: EditDevice):  # -> List[bool, str]
+    """This function edits the device database.
+       Operations include register, remove, update.
+    """
+
+    msg = ""
     database = "data/registered_devices.json"
 
     # connect to database, which is a json at this stage in module development
-    json_open_results = open_json(database)
+    json_open_results = _open_json(database)
 
     # check if the json file opened corrected
     if not json_open_results[0]:
         return json_open_results
 
+    # check if device_id is an int
+    if not isinstance(device_id, int):
+        msg = f"Editing Device Database: device_id \"{device_id}\" is not an int."
+        logging.error(msg)
+        return [False, msg]
+
+    # check if edit operation variable is of type EditDevice()
+    if not isinstance(operation, EditDevice):
+        msg = f"Editing Device Database: operation \"{operation}\" is not of type EditDevice"
+        logging.error(msg)
+        return [False, msg]
+
     # grab the json with the device info
     devices = json_open_results[2]
 
-    # add the device to the list of device_ids
-    devices["device_ids"].append(device_id)
+    if operation == EditDevice.REGISTER:
+        # add the device to the list of device_ids
+        devices["device_ids"].append(device_id)
+
+    elif operation == EditDevice.REMOVE:
+        # remove the device from the list of device_ids
+        devices["device_ids"].remove(device_id)
+
+    else:
+        msg = f"Editing Device Database: operation \"{operation}\" is not currently supported."
+        logging.error(msg)
+        return [False, msg]
 
     # update number of devices
     devices["total_devices"] = len(devices["device_ids"])
 
-    writing_result = write_json_file(database, devices)
+    # write to database
+    writing_result = _write_json_file(database, devices)
 
-    return writing_result
+    if not writing_result[0]:
+        msg = f"Editing Device Database: {operation.name} device_id \"{device_id}\" in the device database failed."
+        logging.error(msg)
+        return [False, msg]
+
+    else:
+        msg = f"Editing Device Database: {operation.name} device_id \"{device_id}\" in the device database successful."
+        logging.info(msg)
+        return [True, msg]
 
 
-def write_json_file(file_name: str, json_data: dict):  # -> List[bool, str]
+def _write_json_file(file_name: str, json_data: dict):  # -> List[bool, str]
     """This function writes json data to a json file."""
 
     # check if file name passed is a string
@@ -673,7 +749,7 @@ def write_json_file(file_name: str, json_data: dict):  # -> List[bool, str]
     #     logging.error(msg)
     #     return [False, msg]
 
-    is_json_file_result = is_JSON_file(file_name)
+    is_json_file_result = _is_JSON_file(file_name)
     if not is_json_file_result[0]:
         return is_json_file_result
 
@@ -688,7 +764,7 @@ def write_json_file(file_name: str, json_data: dict):  # -> List[bool, str]
 
             # read in the entire json file
             json.dump(json_data, json_file, indent=4)
-            msg = f"Writing to JSON file: Successfully wrote to  JSON file called: {file_name}"
+            msg = f"Writing to JSON file: Successfully wrote to JSON file called: {file_name}"
             logging.info(msg)
 
             return [True, msg]
@@ -708,3 +784,5 @@ if __name__ == '__main__':
     # print(verify_measurement_range("temperature", 200, "F"))
 
     print(register_device(123))
+    print(register_device(1))
+    print(remove_device(1))

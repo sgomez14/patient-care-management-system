@@ -57,7 +57,7 @@ if __name__ == '__main__':
     databaseData = ""
 
     # open json file
-    opening_results = device.open_json(file2)
+    opening_results = device._open_json(file2)
 
     # convert to json string
     inputData = json.dumps(opening_results[2])
