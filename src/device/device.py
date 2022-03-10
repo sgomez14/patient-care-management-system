@@ -4,14 +4,15 @@ import logging
 import json
 import os
 import enum
+import registered_devices
 
 
-def send_measurements(json_file: str, flask_path=False, passing_a_file=False):  # -> List[bool, str]:
+def send_measurements(json_file: str, passing_a_file=False):  # -> List[bool, str]:
     """This function receives a JSON file and returns a list.
        The list index 0 indicates success of function and index 1 provides a status message"""
 
     # validate JSON file
-    validate_JSON_format_results: List[bool, str] = validate_JSON(json_file, flask_path=flask_path, passing_a_file=passing_a_file)
+    validate_JSON_format_results: List[bool, str] = validate_JSON(json_file, passing_a_file=passing_a_file)
 
     if not validate_JSON_format_results[0]:
         return validate_JSON_format_results
@@ -62,7 +63,7 @@ def _is_JSON_file(file: str):  # -> List[bool, str]:
             return [False, msg]
 
 
-def validate_JSON(json_file: str, flask_path=False, passing_a_file=False):  # -> List[bool, str]:
+def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str]:
     """This function checks that the json adheres to the device module's json schema"""
 
     # this variable will contain the JSON data
@@ -107,10 +108,7 @@ def validate_JSON(json_file: str, flask_path=False, passing_a_file=False):  # ->
         return primaryKeys_check_results
 
     # check if device is registered
-    if flask_path != 0:
-        check_device_registered_result = is_device_registered(data["deviceID"], flask_path)
-    else:
-        check_device_registered_result = is_device_registered(data["deviceID"])
+    check_device_registered_result = is_device_registered(data["deviceID"])
 
     if not check_device_registered_result[0]:
         return check_device_registered_result
@@ -571,7 +569,7 @@ class EditDevice(enum.Enum):
     REMOVE = 2
 
 
-def is_device_registered(device_id: int, flask_path=False):  # -> List[bool, str]
+def is_device_registered(device_id: int):  # -> List[bool, str]
     """This function checks if a device is registered.
     Returns true if the device is registered, otherwise false.
     Debugging message is also included.
@@ -585,28 +583,28 @@ def is_device_registered(device_id: int, flask_path=False):  # -> List[bool, str
         logging.error(msg)
         return [result, msg]
 
-    database = "data/registered_devices.json"
-
-    if flask_path:
-        database = os.path.join(flask_path, "src", "device", "data", "registered_devices.json")
+    # database = "data/registered_devices.json"
 
     # connect to database, which is a json at this stage in module development
-    json_open_results = _open_json(database)
+    # json_open_results = _open_json(database)
 
     # check if the open did not work
-    if not json_open_results[0]:
-        return json_open_results
+    # if not json_open_results[0]:
+    #     return json_open_results
 
     # the json data is the 3 element in the list returned by open_json
     # the json has the device IDs in a list that is paired to key "device_ids"
-    registered_devices = json_open_results[2]["device_ids"]
+    # registered_devices = json_open_results[2]["device_ids"]
 
-    if device_id not in registered_devices:
-        msg = f"Checking device registration: Device \"{device_id}\" is not registered."
+    # registered devices stored in static list within a dictionary in registered_devices.py
+    reg_devices = registered_devices.devices["device_ids"]
+
+    if device_id not in reg_devices:
+        msg = f"is_device_registered: Device \"{device_id}\" is not registered."
         logging.info(msg)
     else:
         result = True
-        msg = f"Checking device registration: Device \"{device_id}\" is registered."
+        msg = f"is_device_registered: Device \"{device_id}\" is registered."
         logging.info(msg)
 
     return [result, msg]
@@ -695,14 +693,16 @@ def _edit_device_database(device_id: int, operation: EditDevice):  # -> List[boo
     """
 
     msg = ""
-    database = "data/registered_devices.json"
+    editing_result = False
 
-    # connect to database, which is a json at this stage in module development
-    json_open_results = _open_json(database)
-
-    # check if the json file opened corrected
-    if not json_open_results[0]:
-        return json_open_results
+    # database = "data/registered_devices.json"
+    #
+    # # connect to database, which is a json at this stage in module development
+    # json_open_results = _open_json(database)
+    #
+    # # check if the json file opened corrected
+    # if not json_open_results[0]:
+    #     return json_open_results
 
     # check if device_id is an int
     if not isinstance(device_id, int):
@@ -717,15 +717,23 @@ def _edit_device_database(device_id: int, operation: EditDevice):  # -> List[boo
         return [False, msg]
 
     # grab the json with the device info
-    devices = json_open_results[2]
+    # devices = json_open_results[2]
 
     if operation == EditDevice.REGISTER:
         # add the device to the list of device_ids
-        devices["device_ids"].append(device_id)
+        # devices["device_ids"].append(device_id)
+
+        registered_devices.devices["device_ids"].append(device_id)
+
+        editing_result = device_id in registered_devices.devices["device_ids"]
 
     elif operation == EditDevice.REMOVE:
         # remove the device from the list of device_ids
-        devices["device_ids"].remove(device_id)
+        # devices["device_ids"].remove(device_id)
+
+        registered_devices.devices["device_ids"].remove(device_id)
+
+        editing_result = device_id not in registered_devices.devices["device_ids"]
 
     else:
         msg = f"Editing Device Database: operation \"{operation}\" is not currently supported."
@@ -733,12 +741,12 @@ def _edit_device_database(device_id: int, operation: EditDevice):  # -> List[boo
         return [False, msg]
 
     # update number of devices
-    devices["total_devices"] = len(devices["device_ids"])
+    # devices["total_devices"] = len(devices["device_ids"])
 
     # write to database
-    writing_result = _write_json_file(database, devices)
+    # writing_result = _write_json_file(database, devices)
 
-    if not writing_result[0]:
+    if not editing_result:
         msg = f"Editing Device Database: {operation.name} device_id \"{device_id}\" in the device database failed."
         logging.error(msg)
         return [False, msg]

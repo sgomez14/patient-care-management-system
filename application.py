@@ -24,7 +24,7 @@ class ValidateJSON(Resource):
     def get(self, json_file):
         # path: str = data_directory + json_file
         print(flask_path)
-        validate_result = device.validate_JSON(json_file, flask_path=flask_path)
+        validate_result = device.validate_JSON(json_file)
         return {"result": validate_result[0],
                 "message": validate_result[1],
                 "data": json_file,
@@ -35,7 +35,7 @@ class SendMeasurements(Resource):
     def get(self, json_file):
         # path: str = data_directory + json_file
         print(flask_path)
-        send_measurements_result = device.validate_JSON(json_file, flask_path=flask_path)
+        send_measurements_result = device.validate_JSON(json_file)
         return {"result": send_measurements_result[0],
                 "message": send_measurements_result[1],
                 "path": json_file,
@@ -43,7 +43,7 @@ class SendMeasurements(Resource):
 
     def post(self, json_file):
         # path: str = data_directory + json_file
-        send_measurements_result = device.send_measurements(json_file, flask_path=flask_path)
+        send_measurements_result = device.send_measurements(json_file)
         return {"result": send_measurements_result[0],
                 "message": send_measurements_result[1],
                 "path": json_file,
