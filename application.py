@@ -48,10 +48,28 @@ class IsDeviceRegistered(Resource):
                 "device_id": device_id}
 
 
+class RegisterDevice(Resource):
+    def post(self, device_id):
+        registered_result = device.register_device(device_id)
+        return {"result": registered_result[0],
+                "message": registered_result[1],
+                "device_id": device_id}
+
+
+class RemoveDevice(Resource):
+    def put(self, device_id):
+        registered_result = device.remove_device(device_id)
+        return {"result": registered_result[0],
+                "message": registered_result[1],
+                "device_id": device_id}
+
+
 api.add_resource(HomePage, "/")
 api.add_resource(ValidateJSON, "/device/validate/<string:json_file>")
 api.add_resource(SendMeasurements, "/device/send-measurements/<string:json_file>")
 api.add_resource(IsDeviceRegistered, "/device/is-device-registered/<int:device_id>")
+api.add_resource(RegisterDevice, "/device/register-device/<int:device_id>")
+api.add_resource(RemoveDevice, "/device/remove-device/<int:device_id>")
 
 if __name__ == "__main__":
     application.run(debug=True)
