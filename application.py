@@ -13,13 +13,25 @@ data_directory: str = "data/"
 
 
 def error_handler(error_code: int, error_msg: str) -> None:
-    # abort(error_code, msg)
+    """This function calls abort with the error code passed and custom message"""
+
     abort(Response(error_msg, error_code))
+
+
+def api_call_successful(operation_success: bool, msg: str, error_code: int) -> bool:
+    """This function checks if the API call succeeded.
+     Returns True if successful, otherwise calls error_handler.
+     """
+
+    if operation_success:
+        return True
+    else:
+        error_handler(error_code=error_code, error_msg=msg)
+        return False
 
 
 class HomePage(Resource):
     def get(self):
-
         return "Landing page for Device Module API"
 
 
@@ -32,17 +44,22 @@ class ValidateJSON(Resource):
 
 
 class SendMeasurements(Resource):
-    def get(self, json_file):
-        send_measurements_result = device.validate_JSON(json_file)
-        return {"result": send_measurements_result[0],
-                "message": send_measurements_result[1],
-                "data": json_file}
+    # def get(self, json_file):
+    #     send_measurements_result = device.validate_JSON(json_file)
+    #     return {"result": send_measurements_result[0],
+    #             "message": send_measurements_result[1],
+    #             "data": json_file}
 
     def post(self, json_file):
         send_measurements_result = device.send_measurements(json_file)
-        return {"result": send_measurements_result[0],
-                "message": send_measurements_result[1],
-                "data": json_file}
+
+        if api_call_successful(operation_success=send_measurements_result[0],
+                               msg=send_measurements_result[1],
+                               error_code=send_measurements_result[2]):
+
+            return {"result": send_measurements_result[0],
+                    "message": send_measurements_result[1],
+                    "data": json_file}
 
 
 class IsDeviceRegistered(Resource):
@@ -56,22 +73,27 @@ class IsDeviceRegistered(Resource):
 class RegisterDevice(Resource):
     def post(self, device_id):
         registered_result = device.register_device(device_id)
-        return {"result": registered_result[0],
-                "message": registered_result[1],
-                "device_id": device_id}
+
+        if api_call_successful(operation_success=registered_result[0],
+                               msg=registered_result[1],
+                               error_code=registered_result[2]):
+
+            return {"result": registered_result[0],
+                    "message": registered_result[1],
+                    "device_id": device_id}
 
 
 class RemoveDevice(Resource):
     def put(self, device_id):
-        registered_result = device.remove_device(device_id)
-        msg = registered_result[1]
+        remove_result = device.remove_device(device_id)
 
-        if not registered_result[0]:
-            error_handler(409,msg)
+        if api_call_successful(operation_success=remove_result[0],
+                               msg=remove_result[1],
+                               error_code=remove_result[2]):
 
-        return {"result": registered_result[0],
-                "message": registered_result[1],
-                "device_id": device_id}
+            return {"result": remove_result[0],
+                    "message": remove_result[1],
+                    "device_id": device_id}
 
 
 api.add_resource(HomePage, "/")
