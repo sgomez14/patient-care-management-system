@@ -27,9 +27,9 @@ def rest_api_validate(file):
     print(response.status_code)
 
     if response.ok:
-        json_response = json.dumps(response.json(), indent=4)
+        json_response = response.text  # json.dumps(response.json(), indent=4)
     else:
-        json_response = "error with request"
+        json_response = response.text
 
     print(json_response)
 
@@ -44,7 +44,7 @@ def rest_api_send_measurements(file):
     if response.ok:
         json_response = json.dumps(response.json(), indent=4)
     else:
-        json_response = "error with request"
+        json_response = response.text
 
     print(json_response)
 

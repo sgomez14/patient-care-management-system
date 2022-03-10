@@ -38,9 +38,14 @@ class HomePage(Resource):
 class ValidateJSON(Resource):
     def get(self, json_file):
         validate_result = device.validate_JSON(json_file)
-        return {"result": validate_result[0],
-                "message": validate_result[1],
-                "data": json_file}
+
+        if api_call_successful(operation_success=validate_result[0],
+                               msg=validate_result[1],
+                               error_code=validate_result[2]):
+
+            return {"result": validate_result[0],
+                    "message": validate_result[1],
+                    "data": json_file}
 
 
 class SendMeasurements(Resource):

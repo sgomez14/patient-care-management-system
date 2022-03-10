@@ -1,6 +1,6 @@
 {
     "patientID": 1234,
-    "deviceID": 9876,
+    "deviceID": 987,
     "deviceType": 1,
     "measurements": {
         "temperature":
