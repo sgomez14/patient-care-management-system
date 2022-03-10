@@ -24,7 +24,7 @@ class ValidateJSON(Resource):
         validate_result = device.validate_JSON(json_file)
         return {"result": validate_result[0],
                 "message": validate_result[1],
-                "data": json_file,}
+                "data": json_file}
 
 
 class SendMeasurements(Resource):
@@ -33,7 +33,7 @@ class SendMeasurements(Resource):
         send_measurements_result = device.validate_JSON(json_file)
         return {"result": send_measurements_result[0],
                 "message": send_measurements_result[1],
-                "data": json_file,}
+                "data": json_file}
 
     def post(self, json_file):
         # path: str = data_directory + json_file
