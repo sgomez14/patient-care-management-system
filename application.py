@@ -1,6 +1,5 @@
 # import sys
 # sys.path.append("..")
-import json
 
 from flask import Flask, jsonify
 from flask_restful import Api, Resource
@@ -15,6 +14,7 @@ data_directory: str = "data/"
 
 class HomePage(Resource):
     def get(self):
+
         return "Landing page for Device Module API"
 
 
@@ -43,9 +43,9 @@ class SendMeasurements(Resource):
 class IsDeviceRegistered(Resource):
     def get(self, device_id):
         registered_result = device.is_device_registered(device_id)
-        return json.dumps({"result": registered_result[0],
-                           "message": registered_result[1],
-                           "device_id": device_id}, indent=4)
+        return {"result": registered_result[0],
+                "message": registered_result[1],
+                "device_id": device_id}
 
 
 api.add_resource(HomePage, "/")
