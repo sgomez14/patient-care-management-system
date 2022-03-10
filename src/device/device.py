@@ -4,7 +4,7 @@ import logging
 import json
 import os
 import enum
-from .registered_devices import devices
+import registered_devices
 
 
 def send_measurements(json_file: str, passing_a_file=False):  # -> List[bool, str]:
@@ -597,7 +597,7 @@ def is_device_registered(device_id: int):  # -> List[bool, str]
     # registered_devices = json_open_results[2]["device_ids"]
 
     # registered devices stored in static list within a dictionary in registered_devices.py
-    reg_devices = devices["device_ids"]
+    reg_devices = registered_devices.devices["device_ids"]
 
     if device_id not in reg_devices:
         msg = f"is_device_registered: Device \"{device_id}\" is not registered."
@@ -723,17 +723,17 @@ def _edit_device_database(device_id: int, operation: EditDevice):  # -> List[boo
         # add the device to the list of device_ids
         # devices["device_ids"].append(device_id)
 
-        devices["device_ids"].append(device_id)
+        registered_devices.devices["device_ids"].append(device_id)
 
-        editing_result = device_id in devices["device_ids"]
+        editing_result = device_id in registered_devices.devices["device_ids"]
 
     elif operation == EditDevice.REMOVE:
         # remove the device from the list of device_ids
         # devices["device_ids"].remove(device_id)
 
-        devices["device_ids"].remove(device_id)
+        registered_devices.devices["device_ids"].remove(device_id)
 
-        editing_result = device_id not in devices["device_ids"]
+        editing_result = device_id not in registered_devices.devices["device_ids"]
 
     else:
         msg = f"Editing Device Database: operation \"{operation}\" is not currently supported."
