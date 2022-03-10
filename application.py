@@ -1,7 +1,7 @@
 # import sys
 # sys.path.append("..")
 
-from flask import Flask, jsonify
+from flask import Flask  # ,jsonify
 from flask_restful import Api, Resource
 from src.device import device
 

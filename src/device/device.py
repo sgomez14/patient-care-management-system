@@ -702,7 +702,7 @@ def _edit_device_database(device_id: int, operation: EditDevice):  # -> List[boo
         return [False, msg]
 
     else:
-        msg = f'Editing Device Database: {operation.name} device_id "{device_id}" in the device database successful.'
+        msg = f"Editing Device Database: {operation.name} device_id \"{device_id}\" in the device database successful."
         logging.info(msg)
         return [True, msg]
 
