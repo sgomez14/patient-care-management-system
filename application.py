@@ -44,7 +44,7 @@ class IsDeviceRegistered(Resource):
         registered_result = device.is_device_registered(device_id)
         return jsonify({"result": registered_result[0],
                         "message": registered_result[1],
-                        "device_id": device_id})
+                        "device_id": device_id}, indent=4)
 
 
 api.add_resource(HomePage, "/")
