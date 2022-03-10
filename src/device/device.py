@@ -702,7 +702,7 @@ def _edit_device_database(device_id: int, operation: EditDevice):  # -> List[boo
         return [False, msg]
 
     else:
-        msg = f"Editing Device Database: {operation.name} device_id \"{device_id}\" in the device database successful."
+        msg = f'Editing Device Database: {operation.name} device_id "{device_id}" in the device database successful.'
         logging.info(msg)
         return [True, msg]
 
@@ -746,7 +746,7 @@ def _write_json_file(file_name: str, json_data: dict):  # -> List[bool, str]
 if __name__ == '__main__':
     file = "data/tempJSON.json"
     # placeholder for testing device.py
-    print(send_measurements(file, passing_a_file=True))
+    # print(send_measurements(file, passing_a_file=True))
 
     # print(verify_measurement_range("temperature", 98, "F"))
     # print(verify_measurement_range("temperature", 200, "F"))
@@ -754,3 +754,5 @@ if __name__ == '__main__':
     # print(register_device(123))
     # print(register_device(1))
     # print(remove_device(1))
+
+    print(is_device_registered(1))
