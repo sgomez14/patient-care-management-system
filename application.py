@@ -2,14 +2,18 @@
 # sys.path.append("..")
 
 from flask import Flask  # ,jsonify
-from flask_restful import Api, Resource
+from flask_restful import Api, Resource, abort
 from src.device import device
 
 application = Flask(__name__)
 # app = application
-api = Api(application)
+api = Api(application, catch_all_404s=True)
 
 data_directory: str = "data/"
+
+
+def error_handler(error_code: int, msg: str) -> None:
+    abort(error_code, msg)
 
 
 class HomePage(Resource):
@@ -59,6 +63,11 @@ class RegisterDevice(Resource):
 class RemoveDevice(Resource):
     def put(self, device_id):
         registered_result = device.remove_device(device_id)
+        msg = registered_result[1]
+
+        if not registered_result[0]:
+            error_handler(409,msg)
+            
         return {"result": registered_result[0],
                 "message": registered_result[1],
                 "device_id": device_id}
