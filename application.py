@@ -51,7 +51,7 @@ class IsDeviceRegistered(Resource):
 api.add_resource(HomePage, "/")
 api.add_resource(ValidateJSON, "/device/validate/<string:json_file>")
 api.add_resource(SendMeasurements, "/device/send-measurements/<string:json_file>")
-api.add_resource(IsDeviceRegistered, "/device/is-device-registered/<int:json_file>")
+api.add_resource(IsDeviceRegistered, "/device/is-device-registered/<int:device_id>")
 
 if __name__ == "__main__":
     application.run(debug=True)
