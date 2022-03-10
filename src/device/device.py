@@ -4,7 +4,7 @@ import logging
 import json
 import os
 import enum
-import registered_devices
+# import registered_devices
 
 
 def send_measurements(json_file: str, passing_a_file=False):  # -> List[bool, str]:
