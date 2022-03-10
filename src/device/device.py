@@ -591,6 +591,7 @@ def is_device_registered(device_id: int):  # -> List[bool, str]
     """
     msg = ""
     result = False
+    api_result = ApiResult.DEFAULT_FAIL.value
 
     # check if device_id is an int
     if not isinstance(device_id, int):
@@ -604,12 +605,14 @@ def is_device_registered(device_id: int):  # -> List[bool, str]
     if device_id not in reg_devices:
         msg = f"is_device_registered: Device \"{device_id}\" is not registered."
         logging.info(msg)
+        api_result = ApiResult.CONFLICT.value
     else:
         result = True
         msg = f"is_device_registered: Device \"{device_id}\" is registered."
         logging.info(msg)
+        api_result = ApiResult.SUCCESS.value
 
-    return [result, msg, ApiResult.SUCCESS.value]
+    return [result, msg, api_result]
 
 
 def register_device(device_id: int):  # -> List[bool, str]
