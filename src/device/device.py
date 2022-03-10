@@ -584,20 +584,7 @@ def is_device_registered(device_id: int):  # -> List[bool, str]
         logging.error(msg)
         return [result, msg]
 
-    # database = "data/registered_devices.json"
-
-    # connect to database, which is a json at this stage in module development
-    # json_open_results = _open_json(database)
-
-    # check if the open did not work
-    # if not json_open_results[0]:
-    #     return json_open_results
-
-    # the json data is the 3 element in the list returned by open_json
-    # the json has the device IDs in a list that is paired to key "device_ids"
-    # registered_devices = json_open_results[2]["device_ids"]
-
-    # registered devices stored in static list within a dictionary in registered_devices.py
+    # get list of registered devices
     reg_devices = registered_devices["device_ids"]
 
     if device_id not in reg_devices:
@@ -627,17 +614,9 @@ def register_device(device_id: int):  # -> List[bool, str]
         return [result, msg]
 
     is_device_registered_result = is_device_registered(device_id)
-    total_result_items = len(is_device_registered_result)
-
-    # failing due to file IO can be detected if the total items in the result is greater than 2
-    reg_check_failed_due_to_fileIO = total_result_items > 2
-
-    # check if the device check failed due to file IO
-    if not is_device_registered_result[0] and reg_check_failed_due_to_fileIO:
-        return is_device_registered_result
 
     # check if the device is already registered
-    elif is_device_registered_result[0]:
+    if is_device_registered_result[0]:
         msg = f"Registering Device: Device \"{device_id}\" is already registered."
         logging.error(msg)
         return [False, msg]
@@ -660,18 +639,10 @@ def remove_device(device_id: int):  # -> List[bool, str]
     """This function removes device from database."""
 
     is_device_registered_result = is_device_registered(device_id)
-    total_result_items = len(is_device_registered_result)
-
-    # failing due to file IO can be detected if the total items in the result is greater than 2
-    reg_check_failed_due_to_fileIO = total_result_items > 2
-
-    # check if the device check failed due to file IO
-    if not is_device_registered_result[0] and reg_check_failed_due_to_fileIO:
-        return is_device_registered_result
 
     # check if the device is already registered
-    elif not is_device_registered_result[0] and not reg_check_failed_due_to_fileIO:
-        msg = f"Removing Device: Device \"{device_id}\" is not registered."
+    if not is_device_registered_result[0]:
+        msg = f"Removing Device: Device \"{device_id}\" is not registered. It can not be removed."
         logging.error(msg)
         return [False, msg]
 
@@ -696,15 +667,6 @@ def _edit_device_database(device_id: int, operation: EditDevice):  # -> List[boo
     msg = ""
     editing_result = False
 
-    # database = "data/registered_devices.json"
-    #
-    # # connect to database, which is a json at this stage in module development
-    # json_open_results = _open_json(database)
-    #
-    # # check if the json file opened corrected
-    # if not json_open_results[0]:
-    #     return json_open_results
-
     # check if device_id is an int
     if not isinstance(device_id, int):
         msg = f"Editing Device Database: device_id \"{device_id}\" is not an int."
@@ -717,21 +679,14 @@ def _edit_device_database(device_id: int, operation: EditDevice):  # -> List[boo
         logging.error(msg)
         return [False, msg]
 
-    # grab the json with the device info
-    # devices = json_open_results[2]
-
     if operation == EditDevice.REGISTER:
         # add the device to the list of device_ids
-        # devices["device_ids"].append(device_id)
-
         registered_devices["device_ids"].append(device_id)
 
         editing_result = device_id in registered_devices["device_ids"]
 
     elif operation == EditDevice.REMOVE:
         # remove the device from the list of device_ids
-        # devices["device_ids"].remove(device_id)
-
         registered_devices["device_ids"].remove(device_id)
 
         editing_result = device_id not in registered_devices["device_ids"]
@@ -740,12 +695,6 @@ def _edit_device_database(device_id: int, operation: EditDevice):  # -> List[boo
         msg = f"Editing Device Database: operation \"{operation}\" is not currently supported."
         logging.error(msg)
         return [False, msg]
-
-    # update number of devices
-    # devices["total_devices"] = len(devices["device_ids"])
-
-    # write to database
-    # writing_result = _write_json_file(database, devices)
 
     if not editing_result:
         msg = f"Editing Device Database: {operation.name} device_id \"{device_id}\" in the device database failed."
@@ -762,11 +711,12 @@ def _write_json_file(file_name: str, json_data: dict):  # -> List[bool, str]
     """This function writes json data to a json file."""
 
     # check if file name passed is a string
-    # if not isinstance(file_name, str):
-    #     msg = f"Writing to JSON file: file name \"{file_name}\" is not a string."
-    #     logging.error(msg)
-    #     return [False, msg]
+    if not isinstance(file_name, str):
+        msg = f"Writing to JSON file: file name \"{file_name}\" is not a string."
+        logging.error(msg)
+        return [False, msg]
 
+    # check if the file name has json extension
     is_json_file_result = _is_JSON_file(file_name)
     if not is_json_file_result[0]:
         return is_json_file_result
