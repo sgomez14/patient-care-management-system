@@ -45,7 +45,7 @@ def send_measurements(json_file: str, passing_a_file=False):  # -> List[bool, st
     return database_write_result
 
 
-def _is_JSON_file(file: str):  # -> List[bool, str]:
+def _is_JSON_file(file: str):  # -> List[bool, str, ApiResult]:
     """Returns file type as string else it returns invalidFileName"""
 
     logging.info("Determining file type.")
@@ -86,7 +86,7 @@ def _is_JSON_file(file: str):  # -> List[bool, str]:
         return [False, f"Value \"{file}\" is not of type string.", ApiResult.CONFLICT.value]
 
 
-def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str, ApiResult]:
+def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str, ApiResult, dict]:
     """This function checks that the json adheres to the device module's json schema"""
 
     # this variable will contain the JSON data
@@ -160,7 +160,7 @@ def validate_JSON(json_file: str, passing_a_file=False):  # -> List[bool, str, A
     return [True, openResult, ApiResult.SUCCESS.value, data]
 
 
-def _check_primary_keys(keys: List[str], json_data: json):  # -> List[bool, str]:
+def _check_primary_keys(keys: List[str], json_data: json):  # -> List[bool, str, ApiResult]:
     primary_keys: List[str] = ["patientID", "deviceID", "deviceType", "measurements"]
 
     # check that json has four primary keys
@@ -201,7 +201,7 @@ def _check_primary_keys(keys: List[str], json_data: json):  # -> List[bool, str]
     return [True, "all keys correct with corresponding value type", ApiResult.SUCCESS.value]
 
 
-def _check_measurement_keys(keys: List[str], json_data: json):  # -> List[bool, str]:
+def _check_measurement_keys(keys: List[str], json_data: json):  # -> List[bool, str, ApiResult]:
     """This function verifies the keys and values in measurements data structure"""
 
     # measure_key is the string for the name of the measurements key
