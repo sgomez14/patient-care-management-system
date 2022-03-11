@@ -8,6 +8,9 @@ import enum
 # this is the temporary database for the devices
 registered_devices: dict = {"device_ids": [9876, 1000, 123]}
 
+# temp database for storing
+local_database = {}
+
 
 # Using enums
 # https://www.geeksforgeeks.org/enum-in-python/
@@ -327,7 +330,7 @@ def _check_metadata_keys(measurement_key: str, data: List[dict]):  # -> List[boo
     return [True, msg, ApiResult.SUCCESS.value]
 
 
-def _write_to_database(json_data: json):  # -> List[bool, str, ApiResult]:
+def _write_to_database_file(json_data: dict):  # -> List[bool, str, ApiResult]:
     database: str = "data/database.json"
     try:
         with open(database, "w") as json_file:
@@ -342,6 +345,22 @@ def _write_to_database(json_data: json):  # -> List[bool, str, ApiResult]:
         logging.error(message)
 
         return [False, message, ApiResult.DEFAULT_FAIL.value]
+
+
+def _write_to_database(json_data: dict):  # -> List[bool, str, ApiResult]:
+
+    if not isinstance(json_data, dict):
+        msg = "Write to database: arguments passed were not dictionaries"
+        logging.error(msg)
+        return [False, msg, ApiResult.CONFLICT.value]
+
+    local_database = json_data
+    msg = "Write to database: Successfully added device measurements to database."
+    logging.info(msg)
+
+    return [True, msg, ApiResult.SUCCESS.value]
+
+
 
 
 def _verify_units(measurement_key: str, unit: str):  # -> List[bool, str, ApiResult]
@@ -584,7 +603,7 @@ def _load_json_string(json_string: str):  # -> List[bool, str, ApiResult, json o
         return [False, msg, data, ApiResult.CONFLICT.value]
 
 
-def is_device_registered(device_id: int):  # -> List[bool, str]
+def is_device_registered(device_id: int):  # -> List[bool, str., ApiResult]
     """This function checks if a device is registered.
     Returns true if the device is registered, otherwise false.
     Debugging message is also included.

@@ -42,7 +42,7 @@ def rest_api_send_measurements(file):
     print(response.status_code)
 
     if response.ok:
-        json_response = json.dumps(response.json(), indent=4)
+        json_response = response.text  # json.dumps(response.json(), indent=4)
     else:
         json_response = response.text
 
