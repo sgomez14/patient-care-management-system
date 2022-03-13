@@ -1,0 +1,141 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$ref": "#/definitions/Chat",
+    "definitions": {
+        "Chat": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "api_access_token": {
+                    "type": "integer"
+                },
+                "message_packet": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/MessagePacket"
+                    }
+                }
+            },
+            "required": [
+                "api_access_token",
+                "message_packet"
+            ],
+            "title": "Chat"
+        },
+        "MessagePacket": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "message_id": {
+                    "type": "integer"
+                },
+                "session_id": {
+                    "type": "integer"
+                },
+                "timestamp": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "device": {
+                    "type": "string"
+                },
+                "sender": {
+                    "$ref": "#/definitions/Sender"
+                },
+                "recipients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Sender"
+                    }
+                },
+                "text": {
+                    "type": "string"
+                },
+                "attachments": {
+                    "$ref": "#/definitions/Attachments"
+                }
+            },
+            "required": [
+                "attachments",
+                "device",
+                "message_id",
+                "recipients",
+                "sender",
+                "session_id",
+                "text",
+                "timestamp"
+            ],
+            "title": "MessagePacket"
+        },
+        "Attachments": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "media": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "voice": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "files": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "files",
+                "media",
+                "voice"
+            ],
+            "title": "Attachments"
+        },
+        "Sender": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "user": {
+                    "$ref": "#/definitions/User"
+                }
+            },
+            "required": [
+                "user"
+            ],
+            "title": "Sender"
+        },
+        "User": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "username": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "first_name",
+                "last_name",
+                "user_id",
+                "username"
+            ],
+            "title": "User"
+        }
+    }
+}
+
+
