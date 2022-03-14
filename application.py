@@ -4,7 +4,7 @@
 from flask import Flask, Response  # ,jsonify
 from flask_restful import Api, Resource, abort
 from src.device import device
-from src.chat import chat  # , chat_utils
+# from src.chat import chat  # , chat_utils
 
 application = Flask(__name__)
 # app = application
@@ -102,27 +102,27 @@ class RemoveDevice(Resource):
                     "device_id": device_id}
 
 
-class ValidateChatPacket(Resource):
-    def get(self, chat_json):
-
-        validate_result = chat.validate_message_packet(chat_json)
-
-        if api_call_successful(operation_success=validate_result[0],
-                               msg=validate_result[1],
-                               error_code=validate_result[2]):
-
-            chat_packet = validate_result[-1]
-            access_token = chat_packet["api_access_token"]
-
-            # block to verify access_token
-            verify_token_result = chat.verify_chat_token(access_token)
-
-            if api_call_successful(operation_success=verify_token_result[0],
-                                   msg=verify_token_result[1],
-                                   error_code=verify_token_result[2]):
-                return {"result": validate_result[0],
-                        "message": validate_result[1],
-                        "data_validated": chat_packet}
+# class ValidateChatPacket(Resource):
+#     def get(self, chat_json):
+#
+#         validate_result = chat.validate_message_packet(chat_json)
+#
+#         if api_call_successful(operation_success=validate_result[0],
+#                                msg=validate_result[1],
+#                                error_code=validate_result[2]):
+#
+#             chat_packet = validate_result[-1]
+#             access_token = chat_packet["api_access_token"]
+#
+#             # block to verify access_token
+#             verify_token_result = chat.verify_chat_token(access_token)
+#
+#             if api_call_successful(operation_success=verify_token_result[0],
+#                                    msg=verify_token_result[1],
+#                                    error_code=verify_token_result[2]):
+#                 return {"result": validate_result[0],
+#                         "message": validate_result[1],
+#                         "data_validated": chat_packet}
 
 
 # class GetChatByMessageID(Resource):
@@ -159,7 +159,7 @@ api.add_resource(RegisterDevice, "/device/register-device/<int:device_id>")
 api.add_resource(RemoveDevice, "/device/remove-device/<int:device_id>")
 
 # endpoints for chat module
-api.add_resource(ValidateChatPacket, "/chat/validate-chat-packet/<string:chat_json>")
+# api.add_resource(ValidateChatPacket, "/chat/validate-chat-packet/<string:chat_json>")
 # api.add_resource(GetChatByMessageID, "/chat/get-chat-by-message-id/<string:token_and_id_json>")
 # api.add_resource(GetChatBySessionID, "/chat/get-chat-by-session-id/<string:token_and_id_json>")
 # api.add_resource(GetChatByMessageOwner, "/chat/get-chat-by-message-owner/<string:token_and_id_json>")
