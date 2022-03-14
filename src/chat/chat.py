@@ -5,8 +5,8 @@ import jsonschema
 from jsonschema import validate
 import pymongo
 from pymongo import MongoClient
-from chat_utils import *
-# from .chat_utils import *
+# from chat_utils import *
+from .chat_utils import *
 
 
 valid_tokens = [4567]
@@ -268,6 +268,7 @@ BASE = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/"
 def validate_chat_packet_api_call(chat_packet: dict):
 
     chat_string = json.dumps(chat_packet)
+    print(chat_string)
     print("URL invoked for chat validation: " + BASE + "chat/validate-chat-packet/")
 
     response = requests.get(BASE + "chat/validate-chat-packet/" + chat_string)
