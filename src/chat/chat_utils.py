@@ -247,13 +247,13 @@ mongodb_cluster = "PCMS-Database"
 BASE = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/"
 
 
-def validate_chat_packet_api_call(chat_packet: dict):
+def validate_chat_packet_api_call(chat_packet: str):
 
-    chat_string = json.dumps(chat_packet)
-    print(chat_string)
-    print("URL invoked for chat validation: " + BASE + "chat/validate-chat-packet/")
+    # chat_string = json.dumps(chat_packet)
+    # print(chat_string)
+    print("URL invoked for chat validation: " + BASE + f"chat/validate-chat-packet/{chat_packet}")
 
-    response = requests.get(BASE + "chat/validate-chat-packet/" + chat_string)
+    response = requests.get(BASE + "chat/validate-chat-packet/{'homer': sim}")
 
     print(response.status_code)
 
@@ -266,4 +266,6 @@ def validate_chat_packet_api_call(chat_packet: dict):
 
 
 if __name__ == '__main__':
-    print(validate_chat_packet_api_call(chat_json_example))
+
+    chat_packet = json.dumps(chat_json_example)
+    print(validate_chat_packet_api_call(chat_packet))
