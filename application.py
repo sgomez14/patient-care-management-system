@@ -128,28 +128,30 @@ class ValidateChatPacket(Resource):
 class GetChatByMessageID(Resource):
     def get(self, token_and_id_json):
 
-        json_load_results = chat_utils.load_json_string(token_and_id_json)
+        # json_load_results = chat_utils.load_json_string(token_and_id_json)
+        #
+        # if api_call_successful(operation_success=json_load_results[0],
+        #                        msg=json_load_results[1],
+        #                        error_code=json_load_results[3]):
+        #     token_id_pair = json_load_results[2]
+        #     access_token = token_id_pair["api_access_token"]
+        #
+        #     # block to verify access_token
+        #     verify_token_result = chat.verify_chat_token(access_token)
+        #
+        #     if api_call_successful(operation_success=verify_token_result[0],
+        #                            msg=verify_token_result[1],
+        #                            error_code=verify_token_result[2]):
 
-        if api_call_successful(operation_success=json_load_results[0],
-                               msg=json_load_results[1],
-                               error_code=json_load_results[3]):
-            token_id_pair = json_load_results[2]
-            access_token = token_id_pair["api_access_token"]
+                # message_id = token_id_pair["message_id"]
 
-            # block to verify access_token
-            verify_token_result = chat.verify_chat_token(access_token)
+        message_id = token_and_id_json
 
-            if api_call_successful(operation_success=verify_token_result[0],
-                                   msg=verify_token_result[1],
-                                   error_code=verify_token_result[2]):
+        query_result = chat.ChatDB.find_by_message_id(message_id)
 
-                message_id = token_id_pair["message_id"]
-
-                query_result = chat.ChatDB.find_by_message_id(message_id)
-
-                return {"result": query_result[0],
-                        "message": query_result[1],
-                        "data": query_result[-1]}
+        return {"result": query_result[0],
+                "message": query_result[1],
+                "data": query_result[-1]}
 
 
 api.add_resource(HomePage, "/")
@@ -163,7 +165,7 @@ api.add_resource(RemoveDevice, "/device/remove-device/<int:device_id>")
 
 # endpoints for chat module
 api.add_resource(ValidateChatPacket, "/chat/validate-chat-packet/<string:chat_json>")
-api.add_resource(GetChatByMessageID, "/chat/get-chat-by-message-id/<string:token_and_id_json>")
+api.add_resource(GetChatByMessageID, "/chat/get-chat-by-message-id/<int:token_and_id_json>")
 # api.add_resource(GetChatBySessionID, "/chat/get-chat-by-session-id/<string:token_and_id_json>")
 # api.add_resource(GetChatByMessageOwner, "/chat/get-chat-by-message-owner/<string:token_and_id_json>")
 
