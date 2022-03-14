@@ -267,5 +267,17 @@ def validate_chat_packet_api_call(chat_packet: str):
 
 if __name__ == '__main__':
 
-    chat_packet = json.dumps(chat_json_example)
-    print(validate_chat_packet_api_call(chat_packet))
+    # chat_packet = json.dumps(chat_json_example)
+    # print(validate_chat_packet_api_call(chat_packet))
+
+    url = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/get-chat-by-message-id/"
+
+    url += "{'api_access_token': 4567, 'message_id': 1234}"
+
+    # payload={'api_access_token': 4567, 'message_id': 1234}
+    # headers = {}
+
+    response = requests.request("GET", url)
+
+
+    print(response.text)

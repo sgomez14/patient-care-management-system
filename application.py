@@ -126,8 +126,9 @@ class ValidateChatPacket(Resource):
 
 
 class GetChatByMessageID(Resource):
-    def get(self, chat_json):
-        json_load_results = chat_utils.load_json_string(chat_json)
+    def get(self, token_and_id_json):
+
+        json_load_results = chat_utils.load_json_string(token_and_id_json)
 
         if api_call_successful(operation_success=json_load_results[0],
                                msg=json_load_results[1],
