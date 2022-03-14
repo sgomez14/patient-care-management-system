@@ -1,11 +1,12 @@
 # import json
+import requests
 import logging
 import jsonschema
 from jsonschema import validate
 import pymongo
 from pymongo import MongoClient
-# from chat_utils import *
-from .chat_utils import *
+from chat_utils import *
+# from .chat_utils import *
 
 
 valid_tokens = [4567]
@@ -259,6 +260,27 @@ def _write_to_chat_database(chat_packet: dict):
             return [False, msg, ApiResult.CONFLICT.value]
 
 
+
+# testing purposes only
+BASE = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/"
+
+
+def validate_chat_packet_api_call(chat_packet: dict):
+
+    chat_string = json.dumps(chat_packet)
+    print("URL invoked for chat validation: " + BASE + "chat/validate-chat-packet/")
+
+    response = requests.get(BASE + "chat/validate-chat-packet/" + chat_string)
+
+    print(response.status_code)
+
+    if response.ok:
+        json_response = response.text  # json.dumps(response.json(), indent=4)
+    else:
+        json_response = response.text
+
+    print(json_response)
+
 if __name__ == '__main__':
     print("Hello, this is the chat module")
 
@@ -282,12 +304,14 @@ if __name__ == '__main__':
 
     # results = ChatDB.find_by_session_id(9876)
 
-    results = ChatDB.find_by_message_owner(4567)
+    # results = ChatDB.find_by_message_owner(4567)
+    #
+    # print(len(results[-1]))
+    # print(results[-1])
+    #
+    # for x in results[-1]:
+    #     print(x)
 
-    print(len(results[-1]))
-    print(results[-1])
-
-    for x in results[-1]:
-        print(x)
+    print(validate_chat_packet_api_call(chat_json_example))
 
 
