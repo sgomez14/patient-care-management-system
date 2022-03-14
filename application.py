@@ -125,26 +125,26 @@ class RemoveDevice(Resource):
 #                         "data_validated": chat_packet}
 
 
-# class GetChatByMessageID(Resource):
-#     def get(self, chat_json):
-#         validate_result = chat.validate_message_packet(chat_json)
-#
-#         if api_call_successful(operation_success=validate_result[0],
-#                                msg=validate_result[1],
-#                                error_code=validate_result[2]):
-#             chat_packet = validate_result[-1]
-#             access_token = chat_packet["api_access_token"]
-#
-#             # block to verify access_token
-#             verify_token_result = chat.verify_chat_token(access_token)
-#
-#             if api_call_successful(operation_success=verify_token_result[0],
-#                                    msg=verify_token_result[1],
-#                                    error_code=verify_token_result[2]):
-#
-#                 return {"result": validate_result[0],
-#                         "message": validate_result[1],
-#                         "data_validated": chat_packet}
+class GetChatByMessageID(Resource):
+    def get(self, chat_json):
+        validate_result = chat.validate_message_packet(chat_json)
+
+        if api_call_successful(operation_success=validate_result[0],
+                               msg=validate_result[1],
+                               error_code=validate_result[2]):
+            chat_packet = validate_result[-1]
+            access_token = chat_packet["api_access_token"]
+
+            # block to verify access_token
+            verify_token_result = chat.verify_chat_token(access_token)
+
+            if api_call_successful(operation_success=verify_token_result[0],
+                                   msg=verify_token_result[1],
+                                   error_code=verify_token_result[2]):
+
+                return {"result": validate_result[0],
+                        "message": validate_result[1],
+                        "data_validated": chat_packet}
 
 
 api.add_resource(HomePage, "/")
