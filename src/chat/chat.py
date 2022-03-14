@@ -1,6 +1,6 @@
 import json
 import enum
-# import requests
+import requests
 import logging
 import jsonschema
 from jsonschema import validate
@@ -435,25 +435,25 @@ def _write_to_chat_database(chat_packet: dict):
 
 
 # testing purposes only
-# BASE = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/"
-#
-#
-# def validate_chat_packet_api_call(chat_packet: dict):
-#
-#     chat_string = json.dumps(chat_packet)
-#     print(chat_string)
-#     print("URL invoked for chat validation: " + BASE + "chat/validate-chat-packet/")
-#
-#     response = requests.get(BASE + "chat/validate-chat-packet/" + chat_string)
-#
-#     print(response.status_code)
-#
-#     if response.ok:
-#         json_response = response.text  # json.dumps(response.json(), indent=4)
-#     else:
-#         json_response = response.text
-#
-#     print(json_response)
+BASE = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/"
+
+
+def validate_chat_packet_api_call(chat_packet: dict):
+
+    chat_string = json.dumps(chat_packet)
+    print(chat_string)
+    print("URL invoked for chat validation: " + BASE + "chat/validate-chat-packet/")
+
+    response = requests.get(BASE + "chat/validate-chat-packet/" + chat_string)
+
+    print(response.status_code)
+
+    if response.ok:
+        json_response = response.text  # json.dumps(response.json(), indent=4)
+    else:
+        json_response = response.text
+
+    print(json_response)
 
 
 if __name__ == '__main__':
@@ -487,6 +487,6 @@ if __name__ == '__main__':
     # for x in results[-1]:
     #     print(x)
 
-    # print(validate_chat_packet_api_call(chat_json_example))
+    print(validate_chat_packet_api_call(chat_json_example))
 
 
