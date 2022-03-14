@@ -4,7 +4,7 @@
 from flask import Flask, Response  # ,jsonify
 from flask_restful import Api, Resource, abort
 from src.device import device
-# from src.chat import chat  # , chat_utils
+from src.chat import chat  # , chat_utils
 
 application = Flask(__name__)
 # app = application
