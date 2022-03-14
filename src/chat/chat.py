@@ -1,8 +1,5 @@
-from typing import List
-from datetime import datetime
+# import json
 import logging
-import json
-import os
 import jsonschema
 from jsonschema import validate
 import pymongo
