@@ -5,12 +5,153 @@ import json
 import os
 import jsonschema
 from jsonschema import validate
+import pymongo
+from pymongo import MongoClient
 from chat_utils import *
 
 
 valid_tokens = [4567]
 
 chat_database = []
+
+
+class ChatDB:
+    cluster = MongoClient(f"mongodb+srv://{mongodb_user}:{mongodb_pwd}@pcms-database.xcbkd.mongodb.net/"
+                          f"{mongodb_cluster}?retryWrites=true&w=majority")
+    db = cluster["pcmsDB"]
+    collection = db["chat"]
+
+    @staticmethod
+    def post_document(chat_packet: dict):
+        """This function takes a chat_packet and insert the messages into the database."""
+
+        # first check if argument is a dictionary
+        if not isinstance(chat_packet, dict):
+            msg = "Writing to Chat Database: The packet past is not correct data structure."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
+
+        message_owner = chat_packet["api_access_token"]
+        documents = []
+
+        for packet in chat_packet["message_packet"]:
+            packet["message_owner"] = message_owner
+            documents.append(packet)
+
+        try:
+            ChatDB.collection.insert_many(documents)
+            msg = "Writing to Database: Operation successful."
+            logging.info(msg)
+            return [True, msg, ApiResult.SUCCESS.value]
+
+        except pymongo.errors.PyMongoError as err:
+            msg = "Writing to Database: Operation failed."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
+
+    @staticmethod
+    def find_by_message_id(message_id: int):
+        """This function finds a single message using the provided message_id"""
+
+        # first check if argument is an int
+        if not isinstance(message_id, int):
+            msg = f"Querying Chat Database: message_id \"{message_id}\" is not type int."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
+
+        # define search filter
+        find_filter = {"message_id": message_id}
+
+        try:
+            document = ChatDB.collection.find_one(filter=find_filter)
+
+            if document is None:
+                msg = f"Querying Chat Database: message_id \"{message_id}\" not found."
+                logging.info(msg)
+                return [False, msg, ApiResult.NOT_FOUND.value]
+            else:
+                msg = f"Querying Chat Database: Found message_id \"{message_id}\"."
+                logging.info(msg)
+                return [True, msg, ApiResult.SUCCESS.value, document]
+
+        except pymongo.errors.PyMongoError as err:
+            msg = f"Querying Chat Database: Checking for message_id \"{message_id}\" failed."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
+
+    @staticmethod
+    def find_by_session_id(session_id: int):
+        """This function finds all messages using the provided session_id"""
+
+        # first check if argument is an int
+        if not isinstance(session_id, int):
+            msg = f"Querying Chat Database: session_id \"{session_id}\" is not type int."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
+
+        # define search filter
+        find_filter = {"session_id": session_id}
+
+        try:
+            document_count = ChatDB.collection.count_documents(filter=find_filter)
+
+            if document_count >= 1:
+                documents = []
+                query_results = ChatDB.collection.find(filter=find_filter)
+
+                for doc in query_results:
+                    documents.append(doc)
+
+                msg = f"Querying Chat Database: Found messages for session_id \"{session_id}\"."
+                logging.info(msg)
+                return [True, msg, ApiResult.SUCCESS.value, documents]
+
+            else:
+                msg = f"Querying Chat Database: session_id \"{session_id}\" not found."
+                logging.info(msg)
+                return [False, msg, ApiResult.NOT_FOUND.value]
+
+        except pymongo.errors.PyMongoError as err:
+            msg = f"Querying Chat Database: Checking for session_id \"{session_id}\" failed."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
+
+    @staticmethod
+    def find_by_message_owner(message_owner: int):
+        """This function finds all messages using the provided message_owner"""
+
+        # first check if argument is an int
+        if not isinstance(message_owner, int):
+            msg = f"Querying Chat Database: message_owner \"{message_owner}\" is not type int."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
+
+        # define search filter
+        find_filter = {"message_owner": message_owner}
+
+        try:
+            document_count = ChatDB.collection.count_documents(filter=find_filter)
+
+            if document_count >= 1:
+                documents = []
+                query_results = ChatDB.collection.find(filter=find_filter)
+
+                for doc in query_results:
+                    documents.append(doc)
+
+                msg = f"Querying Chat Database: Found messages for message_owner \"{message_owner}\"."
+                logging.info(msg)
+                return [True, msg, ApiResult.SUCCESS.value, documents]
+
+            else:
+                msg = f"Querying Chat Database: message_owner \"{message_owner}\" not found."
+                logging.info(msg)
+                return [False, msg, ApiResult.NOT_FOUND.value]
+
+        except pymongo.errors.PyMongoError as err:
+            msg = f"Querying Chat Database: Checking for message_owner \"{message_owner}\" failed."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
 
 
 def validate_message_packet(chat_packet: str):
@@ -29,7 +170,7 @@ def validate_message_packet(chat_packet: str):
         validate(instance=message_json, schema=chat_schema)
         msg = "Validating Message Packet: The submitted packets is valid."
         logging.info(msg)
-        return [True, msg, ApiResult.SUCCESS.value]
+        return [True, msg, ApiResult.SUCCESS.value, message_json]
 
     except jsonschema.exceptions.ValidationError as err:
         msg = "Validating Message Packet: The submitted packets is not valid."
@@ -107,23 +248,50 @@ def _write_to_chat_database(chat_packet: dict):
         logging.error(msg)
         return [False, msg, ApiResult.CONFLICT.value]
 
-    chat_database.append(chat_packet)
-    msg = "Writing to Chat Database: Successfully wrote chat packet to database."
-    logging.info(msg)
+    # call to write to database
+    write_results = ChatDB.post_document(chat_packet)
+    write_successful = write_results[0]
 
-    return [True, msg, ApiResult.SUCCESS.value]
+    if write_successful:
+        msg = "Writing to Chat Database: Successfully wrote chat packet to database."
+        logging.info(msg)
+        return [True, msg, ApiResult.SUCCESS.value]
+    else:
+        if write_successful:
+            msg = "Writing to Chat Database: Writing chat packet to database failed."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
 
 
 if __name__ == '__main__':
     print("Hello, this is the chat module")
 
-    test_json_examples = [chat_json_example, chat_json_wrong]
+    # test_json_examples = [chat_json_example, chat_json_wrong]
+    #
+    # for example in test_json_examples:
+    #
+    #     message_packet = json.dumps(example)
+    #
+    #     validate_result = validate_message_packet(message_packet)
+    #
+    #     print(validate_result)
+    #     print()
+    #
+    #     store_chat_message(message_packet)
 
-    for example in test_json_examples:
+    # post = {"_id": 1, "name": "santiago", "score": 5}
+    # ChatDB.collection.delete_one(post)
 
-        message_packet = json.dumps(example)
+    # print(ChatDB.find_by_message_id(1235))
 
-        validate_result = validate_message_packet(message_packet)
+    # results = ChatDB.find_by_session_id(9876)
 
-        print(validate_result)
-        print()
+    results = ChatDB.find_by_message_owner(4567)
+
+    print(len(results[-1]))
+    print(results[-1])
+
+    for x in results[-1]:
+        print(x)
+
+

@@ -5,7 +5,7 @@ name: Python package
 
 on: 
   push:
-    branches: [main, device]
+    branches: [main, device, chat]
   pull_request: 
     branches: [main]
 
@@ -46,8 +46,14 @@ jobs:
 
       - name: Test with pytest
         run: |
-         # change the working directory to where pytest is located
+         # change the working directory to where device pytest is located
            cd /home/runner/work/patient-care-management-system/patient-care-management-system/src/device
 
          # indicate where pytest is located
            pytest /home/runner/work/patient-care-management-system/patient-care-management-system/src/device/device_test.py
+
+         # change the working directory to where device pytest is located
+           cd /home/runner/work/patient-care-management-system/patient-care-management-system/src/chat
+
+         # indicate where pytest is located
+           pytest /home/runner/work/patient-care-management-system/patient-care-management-system/src/device/chat_test.py
