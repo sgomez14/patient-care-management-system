@@ -5,7 +5,7 @@ name: Python package
 
 on: 
   push:
-    branches: [main, device, chat]
+    branches: [main, device, api]
   pull_request: 
     branches: [main]
 
