@@ -1,6 +1,8 @@
 import json
 import logging
 import enum
+import requests
+
 
 class ApiResult(enum.Enum):
     """This class enumerated codes to indicate the result of an API call."""
@@ -239,3 +241,29 @@ mongo_chat_document1 = {
 mongodb_pwd = "WgAVFP22prU8sVHW"
 mongodb_user = "sgomez22"
 mongodb_cluster = "PCMS-Database"
+
+
+# testing purposes only
+BASE = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/"
+
+
+def validate_chat_packet_api_call(chat_packet: dict):
+
+    chat_string = json.dumps(chat_packet)
+    print(chat_string)
+    print("URL invoked for chat validation: " + BASE + "chat/validate-chat-packet/")
+
+    response = requests.get(BASE + "chat/validate-chat-packet/" + chat_string)
+
+    print(response.status_code)
+
+    if response.ok:
+        json_response = response.text  # json.dumps(response.json(), indent=4)
+    else:
+        json_response = response.text
+
+    print(json_response)
+
+
+if __name__ == '__main__':
+    print(validate_chat_packet_api_call(chat_json_example))
