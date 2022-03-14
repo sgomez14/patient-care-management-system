@@ -21,13 +21,13 @@ def load_json_string(json_string: str):  # -> List[bool, str, ApiResult, json ob
 
     try:
         data = json.loads(json_string)
-        msg = f"_load_json_string: Successfully loaded JSON string called: {json_string}"
+        msg = f"Loading JSON string: Successfully loaded JSON string called: {json_string}"
         logging.info(msg)
         return [True, msg, data, ApiResult.SUCCESS.value]
 
     except json.decoder.JSONDecodeError:
         data = {}
-        msg = "_load_json_string: String could not be converted to JSON"
+        msg = "Loading JSON string: JSON String could not be converted."
         logging.error(msg)
         return [False, msg, data, ApiResult.CONFLICT.value]
 
@@ -278,6 +278,5 @@ if __name__ == '__main__':
     # headers = {}
 
     response = requests.request("GET", url)
-
 
     print(response.text)
