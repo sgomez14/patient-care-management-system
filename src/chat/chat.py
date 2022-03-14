@@ -5,7 +5,6 @@ from jsonschema import validate
 import pymongo
 from pymongo import MongoClient
 # from chat_utils import *
-import chat_utils
 from chat_utils import *
 
 valid_tokens = [4567]
