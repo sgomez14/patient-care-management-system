@@ -260,7 +260,6 @@ def _write_to_chat_database(chat_packet: dict):
             return [False, msg, ApiResult.CONFLICT.value]
 
 
-
 # testing purposes only
 BASE = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/"
 
@@ -281,6 +280,7 @@ def validate_chat_packet_api_call(chat_packet: dict):
         json_response = response.text
 
     print(json_response)
+
 
 if __name__ == '__main__':
     print("Hello, this is the chat module")
