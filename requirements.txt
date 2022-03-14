@@ -3,3 +3,4 @@ flask_restful==0.3.9
 pymongo==4.0.2
 dnspython==2.2.1
 jsonschema==4.4.0
+requests==2.26.0

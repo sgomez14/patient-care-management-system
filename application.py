@@ -147,8 +147,6 @@ class RemoveDevice(Resource):
 #                         "data_validated": chat_packet}
 
 
-
-
 api.add_resource(HomePage, "/")
 
 # endpoints for device module
