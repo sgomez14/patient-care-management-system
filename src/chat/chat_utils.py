@@ -2,7 +2,6 @@ import json
 import logging
 import enum
 
-
 class ApiResult(enum.Enum):
     """This class enumerated codes to indicate the result of an API call."""
 
