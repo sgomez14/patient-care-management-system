@@ -3,7 +3,7 @@ import json
 
 # local imports
 from . import chat, chat_utils
-from chat import ChatDB
+from .chat import ChatDB
 
 
 def test_validate_message_packet() -> None:
