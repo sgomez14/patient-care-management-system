@@ -343,40 +343,40 @@ if __name__ == '__main__':
     # print(type(chat_json_example))
     # print(validate_chat_packet_api_call(chat_json_example))
 
-    url = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/"
+    # url = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/"
 
     # url += 'get-chat-by-message-id/{"api_access_token": 4567, "message_id": 1234}'
     # url += 'get-chat-by-session-id/{"api_access_token": 4567, "session_id": 9876}'
-    url += 'get-chat-by-message-owner/{"api_access_token": 4567, "message_owner": 4567}'
+    # url += 'get-chat-by-message-owner/{"api_access_token": 4567, "message_owner": 4567}'
     #
     # # payload={'api_access_token': 4567, 'message_id': 1234}
     # # headers = {}
     #
-    response = requests.request("GET", url)
+    # response = requests.request("GET", url)
+    #
+    # print(response.text)
+    #
+    # chat_packet = json.dumps({"homer": 12345, "homer1": 12345, "homer3": 12345})
+    #
+    # response = requests.get(
+    #     f"http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/validate-chat-packet/{chat_packet}")
+    #
+    # print(response.status_code)
+    # print(response.url)
+    #
+    # if response.ok:
+    #     json_response = response.text  # json.dumps(response.json(), indent=4)
+    # else:
+    #     json_response = response.text
+    #
+    # print(json_response)
 
-    print(response.text)
-
-    chat_packet = json.dumps({"homer": 12345, "homer1": 12345, "homer3": 12345})
-
-    response = requests.get(
-        f"http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/validate-chat-packet/{chat_packet}")
-
-    print(response.status_code)
-    print(response.url)
-
-    if response.ok:
-        json_response = response.text  # json.dumps(response.json(), indent=4)
-    else:
-        json_response = response.text
-
-    print(json_response)
-
-    url = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/"
+    url = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/store-chat"
 
     chat_packet = json.dumps(chat_json_example2)
-    url += f"{chat_packet}"
+    # url += f"{chat_packet}"
 
-    response = requests.post(url)
+    response = requests.post(url + '/{"hello": 1}')
 
     print(response.status_code)
     print(response.url)

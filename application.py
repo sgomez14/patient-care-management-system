@@ -144,8 +144,6 @@ class GetChatByMessageID(Resource):
 
                 message_id = token_id_pair["message_id"]
 
-                # message_id = token_and_id_json
-
                 query_result = chat.ChatDB.find_by_message_id(message_id)
 
                 return {"result": query_result[0],
@@ -174,8 +172,6 @@ class GetChatBySessionID(Resource):
 
                 session_id = token_id_pair["session_id"]
 
-                # message_id = token_and_id_json
-
                 query_result = chat.ChatDB.find_by_session_id(session_id)
 
                 return {"result": query_result[0],
@@ -203,8 +199,6 @@ class GetChatByMessageOwner(Resource):
                                    error_code=verify_token_result[2]):
 
                 message_owner = token_id_pair["message_owner"]
-
-                # message_id = token_and_id_json
 
                 query_result = chat.ChatDB.find_by_message_owner(message_owner)
 
