@@ -84,8 +84,10 @@ class ChatDB:
                 logging.error(f"Debugging message_id: success getting document -> {document}")
 
                 # convert dictionary into JSON string
-                conversion_result = dump_into_json_string(document)
-                document = conversion_result[-1]
+                # conversion_result = dump_into_json_string(document)
+                # document = conversion_result[-1]
+
+                document.pop("_id")
 
                 return [True, msg, ApiResult.SUCCESS.value, document]
 
