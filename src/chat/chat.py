@@ -6,8 +6,8 @@ import jsonschema
 from jsonschema import validate
 import pymongo
 from pymongo import MongoClient
-# from chat_utils import *
-from .chat_utils import *
+from chat_utils import *
+# from .chat_utils import *
 
 
 valid_tokens = [4567]
@@ -307,7 +307,7 @@ if __name__ == '__main__':
     # post = {"_id": 1, "name": "santiago", "score": 5}
     # ChatDB.collection.delete_one(post)
 
-    # print(ChatDB.find_by_message_id(1235))
+    print(ChatDB.find_by_message_id(1235))
 
     # results = ChatDB.find_by_session_id(9876)
 
@@ -319,6 +319,6 @@ if __name__ == '__main__':
     # for x in results[-1]:
     #     print(x)
 
-    print(validate_chat_packet_api_call(chat_json_example))
+    # print(validate_chat_packet_api_call(chat_json_example))
 
 

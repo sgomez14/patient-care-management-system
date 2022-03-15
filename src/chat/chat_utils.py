@@ -2,6 +2,7 @@ import json
 import logging
 import enum
 import requests
+import chat
 
 
 class ApiResult(enum.Enum):
@@ -277,6 +278,7 @@ if __name__ == '__main__':
     # payload={'api_access_token': 4567, 'message_id': 1234}
     # headers = {}
 
-    response = requests.request("GET", url)
+    # response = requests.request("GET", url)
+    #
+    # print(response.text)
 
-    print(response.text)
