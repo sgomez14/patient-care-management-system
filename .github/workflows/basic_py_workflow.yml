@@ -5,7 +5,7 @@ name: Python package
 
 on: 
   push:
-    branches: [main, device]
+    branches: [main, device, api]
   pull_request: 
     branches: [main]
 
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9"]
+        python-version: ["3.7", "3.8", "3.9"]
         
     steps:
       - uses: actions/checkout@v2
@@ -46,8 +46,14 @@ jobs:
 
       - name: Test with pytest
         run: |
-         # change the working directory to where pytest is located
+         # change the working directory to where device pytest is located
            cd /home/runner/work/patient-care-management-system/patient-care-management-system/src/device
 
          # indicate where pytest is located
            pytest /home/runner/work/patient-care-management-system/patient-care-management-system/src/device/device_test.py
+
+         # change the working directory to where device pytest is located
+           cd /home/runner/work/patient-care-management-system/patient-care-management-system/src/chat
+
+         # indicate where pytest is located
+           pytest /home/runner/work/patient-care-management-system/patient-care-management-system/src/chat/chat_test.py
