@@ -153,6 +153,66 @@ class GetChatByMessageID(Resource):
                         "data": query_result[-1]}
 
 
+class GetChatBySessionID(Resource):
+    def get(self, token_and_id_json):
+
+        json_load_results = chat_utils.load_json_string(token_and_id_json)
+
+        if api_call_successful(operation_success=json_load_results[0],
+                               msg=json_load_results[1],
+                               error_code=json_load_results[3]):
+
+            token_id_pair = json_load_results[2]
+            access_token = token_id_pair["api_access_token"]
+
+            # block to verify access_token
+            verify_token_result = chat.verify_chat_token(access_token)
+
+            if api_call_successful(operation_success=verify_token_result[0],
+                                   msg=verify_token_result[1],
+                                   error_code=verify_token_result[2]):
+
+                session_id = token_id_pair["session_id"]
+
+                # message_id = token_and_id_json
+
+                query_result = chat.ChatDB.find_by_session_id(session_id)
+
+                return {"result": query_result[0],
+                        "message": query_result[1],
+                        "data": query_result[-1]}
+
+
+class GetChatByMessageOwner(Resource):
+    def get(self, token_and_id_json):
+
+        json_load_results = chat_utils.load_json_string(token_and_id_json)
+
+        if api_call_successful(operation_success=json_load_results[0],
+                               msg=json_load_results[1],
+                               error_code=json_load_results[3]):
+
+            token_id_pair = json_load_results[2]
+            access_token = token_id_pair["api_access_token"]
+
+            # block to verify access_token
+            verify_token_result = chat.verify_chat_token(access_token)
+
+            if api_call_successful(operation_success=verify_token_result[0],
+                                   msg=verify_token_result[1],
+                                   error_code=verify_token_result[2]):
+
+                message_owner = token_id_pair["message_owner"]
+
+                # message_id = token_and_id_json
+
+                query_result = chat.ChatDB.find_by_message_owner(message_owner)
+
+                return {"result": query_result[0],
+                        "message": query_result[1],
+                        "data": query_result[-1]}
+
+
 api.add_resource(HomePage, "/")
 
 # endpoints for device module
@@ -165,8 +225,8 @@ api.add_resource(RemoveDevice, "/device/remove-device/<int:device_id>")
 # endpoints for chat module
 api.add_resource(ValidateChatPacket, "/chat/validate-chat-packet/<string:chat_json>")
 api.add_resource(GetChatByMessageID, "/chat/get-chat-by-message-id/<string:token_and_id_json>")
-# api.add_resource(GetChatBySessionID, "/chat/get-chat-by-session-id/<string:token_and_id_json>")
-# api.add_resource(GetChatByMessageOwner, "/chat/get-chat-by-message-owner/<string:token_and_id_json>")
+api.add_resource(GetChatBySessionID, "/chat/get-chat-by-session-id/<string:token_and_id_json>")
+api.add_resource(GetChatByMessageOwner, "/chat/get-chat-by-message-owner/<string:token_and_id_json>")
 
 if __name__ == "__main__":
     application.run(debug=True)

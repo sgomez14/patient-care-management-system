@@ -270,30 +270,59 @@ BASE = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/"
 
 def validate_chat_packet_api_call(chat_packet: dict):
 
-    chat_string = json.dumps(chat_packet)
-    print(chat_string)
-    print("URL invoked for chat validation: " + BASE + f"chat/validate-chat-packet/{chat_string}")
+    chat_string = json.dumps({
+    "api_access_token": 4567,
+    "message_packet": [
+        {
+            "message_id": 1234,
+            "session_id": 9876,
+            "timestamp": "2022-03-12T17:45:07",
+            "device": "iOS",
+            "sender": {"user": {"username": "user1", "user_id": 4321, "first_name": "santiago", "last_name": "gomez"}},
+            "recipients":
+                [
+                    {"user": {"username": "user2", "user_id": 4322, "first_name": "ben", "last_name": "kuter"}},
+                    {"user": {"username": "user3", "user_id": 4323, "first_name": "mandy", "last_name": "yao"}}
+                ],
+            "text": "this is the message user1 sent to user2 and user3",
+            "attachments":
+                {
+                    "media": ["photos.com/photo1", "videos.com/vid1"],
+                    "voice": ["voice-memo.com/memo1"],
+                    "files": ["files.com/file1"]
+                }
+        }]})
 
-    response = requests.get(BASE + f"chat/validate-chat-packet/{chat_string}")
+    print(chat_string)
+    # print("URL invoked for chat validation: " + BASE + f"chat/validate-chat-packet/{chat_string}")
+    print(type(chat_string))
+    # chat_string = '{"api_access_token": 4567, "message_packet":hi}'
+
+
+    response = requests.get(f"http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/get-chat-by-message-id/{chat_packet}")
 
     print(response.status_code)
+    print(response.url)
 
     if response.ok:
         json_response = response.text  # json.dumps(response.json(), indent=4)
     else:
         json_response = response.text
 
-    print(json_response)
+    # print(json_response)
 
 
 if __name__ == '__main__':
 
     # chat_packet = json.dumps(chat_json_example)
+    print(type(chat_json_example))
     print(validate_chat_packet_api_call(chat_json_example))
 
     url = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/get-chat-by-message-id/"
 
-    url += '{"api_access_token": 4567, "message_id": 1234}'
+    # url += '{"api_access_token": 4567, "message_id": 1234}'
+    url += '{"api_access_token": 4567, "session_id": 9876}'
+    # url += '{"api_access_token": 4567, "message_owner": 4567}'
     #
     # # payload={'api_access_token': 4567, 'message_id': 1234}
     # # headers = {}
