@@ -66,27 +66,19 @@ class ChatDB:
         find_filter = {"message_id": message_id}
 
         try:
-            logging.error(f"Debugging message_id: find_filter -> {find_filter}")
+            # query database
             document = ChatDB.collection.find_one(filter=find_filter)
 
-            logging.error(f"Debugging message_id: document -> {document}")
-
             if document is None:
-                logging.error(f"Debugging message_id: failure getting document -> {document}")
                 msg = f"Querying Chat Database: message_id \"{message_id}\" not found."
                 logging.info(msg)
                 return [False, msg, ApiResult.NOT_FOUND.value, {}]
+
             else:
-                logging.error(f"Debugging message_id: success getting document -> {document}")
                 msg = f"Querying Chat Database: Found message_id \"{message_id}\"."
                 logging.info(msg)
-                # document = [True, msg, ApiResult.SUCCESS.value, document]
-                logging.error(f"Debugging message_id: success getting document -> {document}")
 
-                # convert dictionary into JSON string
-                # conversion_result = dump_into_json_string(document)
-                # document = conversion_result[-1]
-
+                # remove the mongoDB _id key so that document can be serialized into JSON string
                 document.pop("_id")
 
                 return [True, msg, ApiResult.SUCCESS.value, document]
@@ -95,7 +87,7 @@ class ChatDB:
             logging.error(f"Debugging message_id: mongo exception -> {err}")
             msg = f"Querying Chat Database: Checking for message_id \"{message_id}\" failed."
             logging.error(msg)
-            return [False, msg, err]#ApiResult.CONFLICT.value]
+            return [False, msg, ApiResult.CONFLICT.value]
 
     @staticmethod
     def find_by_session_id(session_id: int):
@@ -118,6 +110,8 @@ class ChatDB:
                 query_results = ChatDB.collection.find(filter=find_filter)
 
                 for doc in query_results:
+                    # remove the mongoDB _id key so that document can be serialized into JSON string
+                    doc.pop("_id")
                     documents.append(doc)
 
                 msg = f"Querying Chat Database: Found messages for session_id \"{session_id}\"."
@@ -130,6 +124,7 @@ class ChatDB:
                 return [False, msg, ApiResult.NOT_FOUND.value]
 
         except pymongo.errors.PyMongoError as err:
+            logging.error(f"Debugging message_id: mongo exception -> {err}")
             msg = f"Querying Chat Database: Checking for session_id \"{session_id}\" failed."
             logging.error(msg)
             return [False, msg, ApiResult.CONFLICT.value]
@@ -155,6 +150,8 @@ class ChatDB:
                 query_results = ChatDB.collection.find(filter=find_filter)
 
                 for doc in query_results:
+                    # remove the mongoDB _id key so that document can be serialized into JSON string
+                    doc.pop("_id")
                     documents.append(doc)
 
                 msg = f"Querying Chat Database: Found messages for message_owner \"{message_owner}\"."
@@ -167,6 +164,7 @@ class ChatDB:
                 return [False, msg, ApiResult.NOT_FOUND.value]
 
         except pymongo.errors.PyMongoError as err:
+            logging.error(f"Debugging message_id: mongo exception -> {err}")
             msg = f"Querying Chat Database: Checking for message_owner \"{message_owner}\" failed."
             logging.error(msg)
             return [False, msg, ApiResult.CONFLICT.value]
