@@ -145,7 +145,7 @@ class GetChatByMessageID(Resource):
 
                 # message_id = token_id_pair["message_id"]
 
-        message_id = token_and_id_json
+        message_id = 1234 # token_and_id_json
 
         query_result = chat.ChatDB.find_by_message_id(message_id)
 
