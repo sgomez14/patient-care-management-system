@@ -80,7 +80,7 @@ class ChatDB:
         except pymongo.errors.PyMongoError as err:
             msg = f"Querying Chat Database: Checking for message_id \"{message_id}\" failed."
             logging.error(msg)
-            return [False, msg, ApiResult.CONFLICT.value]
+            return [False, msg, err]#ApiResult.CONFLICT.value]
 
     @staticmethod
     def find_by_session_id(session_id: int):
