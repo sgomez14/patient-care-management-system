@@ -2,7 +2,6 @@ import json
 import logging
 import enum
 import requests
-import chat
 
 
 class ApiResult(enum.Enum):
