@@ -268,13 +268,13 @@ mongodb_cluster = "PCMS-Database"
 BASE = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/"
 
 
-def validate_chat_packet_api_call(chat_packet: str):
+def validate_chat_packet_api_call(chat_packet: dict):
 
     chat_string = json.dumps(chat_packet)
     print(chat_string)
-    print("URL invoked for chat validation: " + BASE + f"chat/validate-chat-packet/{chat_packet}")
+    print("URL invoked for chat validation: " + BASE + f"chat/validate-chat-packet/{chat_string}")
 
-    response = requests.get(BASE + "chat/validate-chat-packet/{'homer': sim}")
+    response = requests.get(BASE + f"chat/validate-chat-packet/{chat_string}")
 
     print(response.status_code)
 
@@ -291,14 +291,14 @@ if __name__ == '__main__':
     # chat_packet = json.dumps(chat_json_example)
     print(validate_chat_packet_api_call(chat_json_example))
 
-    # url = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/get-chat-by-message-id/"
-    #
-    # url += "{'api_access_token': 4567, 'message_id': 1234}"
+    url = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/get-chat-by-message-id/"
+
+    url += '{"api_access_token": 4567, "message_id": 1234}'
     #
     # # payload={'api_access_token': 4567, 'message_id': 1234}
     # # headers = {}
     #
-    # response = requests.request("GET", url)
-    #
-    # print(response.text)
+    response = requests.request("GET", url)
+
+    print(response.text)
 
