@@ -66,8 +66,10 @@ class ChatDB:
         find_filter = {"message_id": message_id}
 
         try:
-            # logging.error(f"Debugging message_id: find_filter -> {find_filter}")
+            logging.error(f"Debugging message_id: find_filter -> {find_filter}")
             document = ChatDB.collection.find_one(filter=find_filter)
+
+            logging.error(f"Debugging message_id: document -> {document}")
 
             if document is None:
                 msg = f"Querying Chat Database: message_id \"{message_id}\" not found."
@@ -79,7 +81,7 @@ class ChatDB:
                 return [True, msg, ApiResult.SUCCESS.value, document]
 
         except pymongo.errors.PyMongoError as err:
-            # logging.error(f"Debugging message_id: mongo exception -> {err}")
+            logging.error(f"Debugging message_id: mongo exception -> {err}")
             msg = f"Querying Chat Database: Checking for message_id \"{message_id}\" failed."
             logging.error(msg)
             return [False, msg, err]#ApiResult.CONFLICT.value]
