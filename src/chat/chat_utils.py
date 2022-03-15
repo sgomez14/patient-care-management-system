@@ -239,6 +239,31 @@ chat_json_example = {
     ]
 }
 
+chat_json_example2 = {
+    "api_access_token": 4567,
+    "message_packet": [
+
+        {
+            "message_id": 1239,
+            "session_id": 9877,
+            "timestamp": "2022-03-12T18:45:07",
+            "device": "android",
+            "sender": {"user": {"username": "user2", "user_id": 4322, "first_name": "ben", "last_name": "kuter"}},
+            "recipients":
+                [
+                    {"user": {"username": "user1", "user_id": 4321, "first_name": "santiago", "last_name": "gomez"}}
+                ],
+            "text": "this is the message user2 sent to user1",
+            "attachments":
+                {
+                    "media": ["photos.com/photo2"],
+                    "voice": [],
+                    "files": []
+                }
+        }
+    ]
+}
+
 mongo_chat_document1 = {
     "message_id": 1235,
     "session_id": 9877,
@@ -299,7 +324,7 @@ def validate_chat_packet_api_call(chat_packet: dict):
     # chat_string = '{"api_access_token": 4567, "message_packet":hi}'
 
 
-    response = requests.get(f"http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/get-chat-by-message-id/{chat_packet}")
+    response = requests.get(f"http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/validate-chat-packet/{chat_packet}")
 
     print(response.status_code)
     print(response.url)
@@ -309,20 +334,20 @@ def validate_chat_packet_api_call(chat_packet: dict):
     else:
         json_response = response.text
 
-    # print(json_response)
+    print(json_response)
 
 
 if __name__ == '__main__':
 
     # chat_packet = json.dumps(chat_json_example)
-    print(type(chat_json_example))
-    print(validate_chat_packet_api_call(chat_json_example))
+    # print(type(chat_json_example))
+    # print(validate_chat_packet_api_call(chat_json_example))
 
-    url = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/get-chat-by-message-id/"
+    url = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/"
 
-    # url += '{"api_access_token": 4567, "message_id": 1234}'
-    url += '{"api_access_token": 4567, "session_id": 9876}'
-    # url += '{"api_access_token": 4567, "message_owner": 4567}'
+    # url += 'get-chat-by-message-id/{"api_access_token": 4567, "message_id": 1234}'
+    # url += 'get-chat-by-session-id/{"api_access_token": 4567, "session_id": 9876}'
+    url += 'get-chat-by-message-owner/{"api_access_token": 4567, "message_owner": 4567}'
     #
     # # payload={'api_access_token': 4567, 'message_id': 1234}
     # # headers = {}
@@ -330,4 +355,22 @@ if __name__ == '__main__':
     response = requests.request("GET", url)
 
     print(response.text)
+
+    chat_packet = json.dumps({"homer": 12345, "homer1": 12345, "homer3": 12345})
+
+    response = requests.get(
+        f"http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/validate-chat-packet/{chat_packet}")
+
+    print(response.status_code)
+    print(response.url)
+
+    if response.ok:
+        json_response = response.text  # json.dumps(response.json(), indent=4)
+    else:
+        json_response = response.text
+
+    print(json_response)
+
+    url = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/"
+    
 
