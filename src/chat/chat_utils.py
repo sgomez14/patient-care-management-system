@@ -270,7 +270,7 @@ if __name__ == '__main__':
     # chat_packet = json.dumps(chat_json_example)
     # print(validate_chat_packet_api_call(chat_packet))
 
-    url = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/get-chat-by-message-id/1"
+    url = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/get-chat-by-message-id/1235"
 
     # url += "{'api_access_token': 4567, 'message_id': 1234}"
 
