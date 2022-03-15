@@ -80,7 +80,9 @@ class ChatDB:
                 logging.error(f"Debugging message_id: success getting document -> {document}")
                 msg = f"Querying Chat Database: Found message_id \"{message_id}\"."
                 logging.info(msg)
-                return [True, msg, ApiResult.SUCCESS.value, document]
+                document = [True, msg, ApiResult.SUCCESS.value, document]
+                logging.error(f"Debugging message_id: success getting document -> {document}")
+                return [True, msg, ApiResult.SUCCESS.value] #, document]
 
         except pymongo.errors.PyMongoError as err:
             logging.error(f"Debugging message_id: mongo exception -> {err}")
