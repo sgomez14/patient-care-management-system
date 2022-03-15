@@ -214,16 +214,16 @@ class GetChatByMessageOwner(Resource):
 
 
 class StoreChat(Resource):
-    def post(self, token_and_chat_json):
+    def post(self, chat_packet):
 
-        json_load_results = chat_utils.load_json_string(token_and_chat_json)
+        json_load_results = chat_utils.load_json_string(chat_packet)
 
         if api_call_successful(operation_success=json_load_results[0],
                                msg=json_load_results[1],
                                error_code=json_load_results[3]):
 
-            token_chat_pair = json_load_results[2]
-            access_token = token_chat_pair["api_access_token"]
+            chat_packet = json_load_results[2]
+            access_token = chat_packet["api_access_token"]
 
             # block to verify access_token
             verify_token_result = chat.verify_chat_token(access_token)
@@ -231,10 +231,6 @@ class StoreChat(Resource):
             if api_call_successful(operation_success=verify_token_result[0],
                                    msg=verify_token_result[1],
                                    error_code=verify_token_result[2]):
-
-                chat_packet = token_chat_pair["chat_packet"]
-
-                # message_id = token_and_id_json
 
                 post_result = chat.ChatDB.post_document(chat_packet)
 
@@ -257,7 +253,7 @@ api.add_resource(ValidateChatPacket, "/chat/validate-chat-packet/<string:chat_js
 api.add_resource(GetChatByMessageID, "/chat/get-chat-by-message-id/<string:token_and_id_json>")
 api.add_resource(GetChatBySessionID, "/chat/get-chat-by-session-id/<string:token_and_id_json>")
 api.add_resource(GetChatByMessageOwner, "/chat/get-chat-by-message-owner/<string:token_and_id_json>")
-api.add_resource(StoreChat, "/chat/store-chat/<string:token_and_chat_json>")
+api.add_resource(StoreChat, "/chat/store-chat/<string:chat_packet>")
 
 if __name__ == "__main__":
     application.run(debug=True)

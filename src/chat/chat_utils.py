@@ -372,5 +372,21 @@ if __name__ == '__main__':
     print(json_response)
 
     url = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/"
-    
+
+    chat_packet = json.dumps(chat_json_example2)
+    url += f"{chat_packet}"
+
+    response = requests.post(url)
+
+    print(response.status_code)
+    print(response.url)
+
+    if response.ok:
+        json_response = response.text  # json.dumps(response.json(), indent=4)
+    else:
+        json_response = response.text
+
+    print(json_response)
+
+
 
