@@ -13,6 +13,26 @@ class ApiResult(enum.Enum):
     CONFLICT = 409
 
 
+def dump_into_json_string(data: dict):
+    """This function dumps dictionary into a JSON string"""
+
+    # helper code from Kite.com
+    # https://www.kite.com/python/answers/how-to-handle-json-decode-error-when-nothing-returns-in-python
+
+    try:
+        data = json.dumps(data)
+        msg = f"Dumping into JSON string: Successfully created JSON string: {data}"
+        logging.info(msg)
+        return [True, msg, ApiResult.SUCCESS.value, data]
+
+    except json.decoder.JSONDecodeError:
+        data = {}
+        msg = "Dumping JSON string: JSON string could not be created."
+        logging.error(msg)
+        return [False, msg, ApiResult.CONFLICT.value, data]
+
+
+
 def load_json_string(json_string: str):  # -> List[bool, str, ApiResult, json object]
     """This function loads json from a string"""
 
