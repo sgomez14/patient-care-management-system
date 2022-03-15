@@ -72,10 +72,12 @@ class ChatDB:
             logging.error(f"Debugging message_id: document -> {document}")
 
             if document is None:
+                logging.error(f"Debugging message_id: failure getting document -> {document}")
                 msg = f"Querying Chat Database: message_id \"{message_id}\" not found."
                 logging.info(msg)
-                return [False, msg, ApiResult.NOT_FOUND.value]
+                return [False, msg, ApiResult.NOT_FOUND.value, {}]
             else:
+                logging.error(f"Debugging message_id: success getting document -> {document}")
                 msg = f"Querying Chat Database: Found message_id \"{message_id}\"."
                 logging.info(msg)
                 return [True, msg, ApiResult.SUCCESS.value, document]
