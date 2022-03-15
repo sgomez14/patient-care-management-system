@@ -12,7 +12,7 @@
         {"user": {"username": "user2", "user_id": 4322, "first_name": "ben", "last_name": "kuter"}},
         {"user": {"username": "user3", "user_id": 4323, "first_name": "mandy", "last_name": "yao"}}
       ],
-      "text": "this is the message user1 sent to user2 and user3",
+      "recipients": "this is the message user1 sent to user2 and user3",
       "attachments":
       {
         "media": ["photos.com/photo1", "videos.com/vid1"],
@@ -20,7 +20,6 @@
         "files": ["files.com/file1"]
       }
     },
-
     {
       "message_id": 1235,
       "session_id": 9877,
