@@ -72,7 +72,7 @@ class ChatDB:
             if document is None:
                 msg = f"Querying Chat Database: message_id \"{message_id}\" not found."
                 logging.info(msg)
-                return [False, msg, ApiResult.NOT_FOUND.value, {}]
+                return [False, msg, ApiResult.NOT_FOUND.value]
 
             else:
                 msg = f"Querying Chat Database: Found message_id \"{message_id}\"."
@@ -189,6 +189,7 @@ def validate_message_packet(chat_packet: str):
         return [True, msg, ApiResult.SUCCESS.value, message_json]
 
     except jsonschema.exceptions.ValidationError as err:
+        logging.error(f"Validating Message Packet: JSON schema exception -> {err}")
         msg = "Validating Message Packet: The submitted packets is not valid."
         logging.error(msg)
         return [False, msg, ApiResult.CONFLICT.value, message_json]
@@ -320,7 +321,7 @@ if __name__ == '__main__':
     # post = {"_id": 1, "name": "santiago", "score": 5}
     # ChatDB.collection.delete_one(post)
 
-    print(ChatDB.find_by_message_id(1235))
+    # print(ChatDB.find_by_message_id(1235))
 
     # results = ChatDB.find_by_session_id(9876)
 
@@ -332,6 +333,8 @@ if __name__ == '__main__':
     # for x in results[-1]:
     #     print(x)
 
-    # print(validate_chat_packet_api_call(chat_json_example))
+    print(validate_chat_packet_api_call(chat_json_example))
+
+
 
 

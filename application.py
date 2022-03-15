@@ -1,7 +1,5 @@
-# import sys
-# sys.path.append("..")
-
-from flask import Flask, Response  # ,jsonify
+import logging
+from flask import Flask, Response
 from flask_restful import Api, Resource, abort
 from src.device import device
 from src.chat import chat, chat_utils
@@ -133,6 +131,7 @@ class GetChatByMessageID(Resource):
         if api_call_successful(operation_success=json_load_results[0],
                                msg=json_load_results[1],
                                error_code=json_load_results[3]):
+
             token_id_pair = json_load_results[2]
             access_token = token_id_pair["api_access_token"]
 

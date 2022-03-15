@@ -45,10 +45,11 @@ def load_json_string(json_string: str):  # -> List[bool, str, ApiResult, json ob
         logging.info(msg)
         return [True, msg, data, ApiResult.SUCCESS.value]
 
-    except json.decoder.JSONDecodeError:
+    except json.decoder.JSONDecodeError as err:
         data = {}
         msg = "Loading JSON string: JSON String could not be converted."
         logging.error(msg)
+        logging.error(f"Loading JSON string: JSON exception -> {err}")
         return [False, msg, data, ApiResult.CONFLICT.value]
 
 
@@ -269,8 +270,8 @@ BASE = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/"
 
 def validate_chat_packet_api_call(chat_packet: str):
 
-    # chat_string = json.dumps(chat_packet)
-    # print(chat_string)
+    chat_string = json.dumps(chat_packet)
+    print(chat_string)
     print("URL invoked for chat validation: " + BASE + f"chat/validate-chat-packet/{chat_packet}")
 
     response = requests.get(BASE + "chat/validate-chat-packet/{'homer': sim}")
@@ -288,15 +289,15 @@ def validate_chat_packet_api_call(chat_packet: str):
 if __name__ == '__main__':
 
     # chat_packet = json.dumps(chat_json_example)
-    # print(validate_chat_packet_api_call(chat_packet))
+    print(validate_chat_packet_api_call(chat_json_example))
 
-    url = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/get-chat-by-message-id/1235"
-
+    # url = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/chat/get-chat-by-message-id/"
+    #
     # url += "{'api_access_token': 4567, 'message_id': 1234}"
-
-    # payload={'api_access_token': 4567, 'message_id': 1234}
-    # headers = {}
-
+    #
+    # # payload={'api_access_token': 4567, 'message_id': 1234}
+    # # headers = {}
+    #
     # response = requests.request("GET", url)
     #
     # print(response.text)

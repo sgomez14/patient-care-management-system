@@ -112,9 +112,6 @@ def test_find_by_message_id_message_found() -> None:
 
     test_result = ChatDB.find_by_message_id(message_id)
 
-    # remove the mongoDB generated document id
-    test_result[-1].pop("_id")
-
     # standardize json
     return_document = json.dumps(test_result[-1])
 
@@ -145,7 +142,6 @@ def test_find_by_session_id_message_found() -> None:
 
     test_result = ChatDB.find_by_session_id(session_id)
 
-    # remove last element in result list
     test_result.pop(-1)
 
     assert test_result == expected_result
@@ -172,8 +168,6 @@ def test_find_by_session_id_message_found() -> None:
 
     test_result = ChatDB.find_by_message_owner(message_owner)
 
-    # remove last element in result list
-    test_result.pop(-1)
 
     assert test_result == expected_result
 
