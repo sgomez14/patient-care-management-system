@@ -13,3 +13,7 @@ Documentation is maintained in this repository's [wiki section](https://github.c
 > [Chat Module Data Packet Structure](https://github.com/sgomez14/patient-care-management-system/wiki/Chat-Module-Data-Structure)
 >
 >[Chat Interface API](https://github.com/sgomez14/patient-care-management-system/wiki/Chat-Interface-API)
+
+
+# Progress Report
+Full progress report is located in the [wiki](https://github.com/sgomez14/patient-care-management-system/wiki).
