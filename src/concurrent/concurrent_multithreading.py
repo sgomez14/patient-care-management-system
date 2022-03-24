@@ -34,6 +34,7 @@ def run_many_concurrent_threads(list_runtimes):
     # block until all tasks done
     q.join()
 
+    # previous code when created threads were added to a list
     # for thread in threads_list:
     #     thread.join()
 
@@ -81,6 +82,7 @@ def new_multithreading_method(list_runtimes):
         for item in range(len(list_runtimes)):
             q.put(item)
 
+        # previous code below about using list comprehensions and pairing with it the as_completed() method
         # list is needed when invoking the submit() method
         # can use a list comprehension
         # results = [executor.submit(worker, runtime) for runtime in list_runtimes]
