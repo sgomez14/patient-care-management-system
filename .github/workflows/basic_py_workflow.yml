@@ -62,4 +62,4 @@ jobs:
            cd /home/runner/work/patient-care-management-system/patient-care-management-system/src/concurrent
 
          # indicate where pytest is located
-           pytest /home/runner/work/patient-care-management-system/patient-care-management-system/src/chat/concurrent_multithreading_test.py
+           pytest /home/runner/work/patient-care-management-system/patient-care-management-system/src/concurrent/concurrent_multithreading_test.py
