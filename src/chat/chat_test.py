@@ -159,7 +159,7 @@ def test_find_by_message_owner_not_found() -> None:
     assert test_result == expected_result
 
 
-def test_find_by_session_id_message_found() -> None:
+def test_find_by_message_owner_message_found() -> None:
     """This function tests find_by_message_owner when the message_owner is found."""
 
     message_owner = 4567
@@ -168,6 +168,7 @@ def test_find_by_session_id_message_found() -> None:
 
     test_result = ChatDB.find_by_message_owner(message_owner)
 
+    test_result.pop(-1)
 
     assert test_result == expected_result
 

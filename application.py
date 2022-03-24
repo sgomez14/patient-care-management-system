@@ -1,4 +1,3 @@
-import logging
 from flask import Flask, Response
 from flask_restful import Api, Resource, abort
 from src.device import device
