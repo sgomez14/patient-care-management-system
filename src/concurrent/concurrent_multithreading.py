@@ -1,15 +1,21 @@
 import threading
 import concurrent.futures as cf
+import queue
 import time
 from statistics import mean
 
 # Based on tutorial: Python Threading Tutorial: Run Code Concurrently Using the Threading Module
 # https://www.youtube.com/watch?v=IEEhzQoKtQU
 
+# Global queue
+q = queue.Queue()
+
 
 def worker(seconds: int):
     # print(f"Sleeping for {seconds} seconds...")
+    q.get()
     time.sleep(seconds)
+    q.task_done()
     # msg = f"Done Sleeping...{seconds}"
     # print(msg)
     # return msg
@@ -18,12 +24,19 @@ def worker(seconds: int):
 def run_many_concurrent_threads(list_runtimes):
     threads_list = []
     for runtime in list_runtimes:
-        thread = threading.Thread(target=worker, args=[runtime])
+        thread = threading.Thread(target=worker, args=[runtime], daemon=True)
         thread.start()
         threads_list.append(thread)
 
-    for thread in threads_list:
-        thread.join()
+        # add to queue
+        q.put(runtime)
+
+    # block until all tasks done
+    q.join()
+
+    # previous code when created threads were added to a list
+    # for thread in threads_list:
+    #     thread.join()
 
 
 def run_consecutively(list_runtimes):
@@ -65,6 +78,11 @@ def new_multithreading_method(list_runtimes):
         # using map() method is more compact than list comprehension
         results = executor.map(worker, list_runtimes)
 
+        # add tasks to queue
+        for item in range(len(list_runtimes)):
+            q.put(item)
+
+        # previous code below about using list comprehensions and pairing with it the as_completed() method
         # list is needed when invoking the submit() method
         # can use a list comprehension
         # results = [executor.submit(worker, runtime) for runtime in list_runtimes]

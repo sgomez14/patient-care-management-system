@@ -56,7 +56,7 @@ jobs:
          # cd /home/runner/work/patient-care-management-system/patient-care-management-system/src/chat
 
          # indicate where pytest is located
-         # pytest /home/runner/work/patient-care-management-system/patient-care-management-system/src/chat/chat_test.py
+         # python -m pytest /home/runner/work/patient-care-management-system/patient-care-management-system/src/chat/chat_test.py
 
          # change the working directory to where concurrent pytest is located
            cd /home/runner/work/patient-care-management-system/patient-care-management-system/src/concurrent
