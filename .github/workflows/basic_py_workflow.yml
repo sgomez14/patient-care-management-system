@@ -52,8 +52,14 @@ jobs:
          # indicate where pytest is located
            pytest /home/runner/work/patient-care-management-system/patient-care-management-system/src/device/device_test.py
 
-         # change the working directory to where device pytest is located
+         # change the working directory to where chat pytest is located
            cd /home/runner/work/patient-care-management-system/patient-care-management-system/src/chat
 
          # indicate where pytest is located
            pytest /home/runner/work/patient-care-management-system/patient-care-management-system/src/chat/chat_test.py
+
+         # change the working directory to where concurrent pytest is located
+           cd /home/runner/work/patient-care-management-system/patient-care-management-system/src/concurrent
+
+         # indicate where pytest is located
+           pytest /home/runner/work/patient-care-management-system/patient-care-management-system/src/chat/concurrent_multithreading_test.py
