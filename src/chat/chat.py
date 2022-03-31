@@ -4,9 +4,10 @@ import logging
 import jsonschema
 from jsonschema import validate
 import pymongo
+#import chat_utils
 from pymongo import MongoClient
 # from chat_utils import *
-from .chat_utils import *
+from .chat_utils import * # this gives "ImportError: attempted relative import with no known parent package"
 
 
 valid_tokens = [4567]
@@ -283,22 +284,27 @@ def _write_to_chat_database(chat_packet: dict):
 BASE = "http://patient-care-system-api.us-east-1.elasticbeanstalk.com/"
 
 
-def validate_chat_packet_api_call(chat_packet: dict):
+# def validate_chat_packet_api_call(chat_packet: dict):
 
-    chat_string = json.dumps(chat_packet)
-    print(chat_string)
-    print("URL invoked for chat validation: " + BASE + "chat/validate-chat-packet/")
+#     chat_string = json.dumps(chat_packet)
+#     print(chat_string)
+#     print("URL invoked for chat validation: " + BASE + "chat/validate-chat-packet/")
 
-    response = requests.get(BASE + "chat/validate-chat-packet/" + chat_string)
+#     response = requests.get(BASE + "chat/validate-chat-packet/" + chat_string)
 
-    print(response.status_code)
+#     print(response.status_code)
 
-    if response.ok:
-        json_response = response.text  # json.dumps(response.json(), indent=4)
-    else:
-        json_response = response.text
+#     if response.ok:
+#         json_response = response.text  # json.dumps(response.json(), indent=4)
+#     else:
+#         json_response = response.text
 
-    print(json_response)
+#     print(json_response)
+
+
+# Return number of message packages
+def number_of_packages ():
+    return str(ChatDB.collection.count_documents({}))
 
 
 if __name__ == '__main__':
@@ -332,7 +338,7 @@ if __name__ == '__main__':
     # for x in results[-1]:
     #     print(x)
 
-    print(validate_chat_packet_api_call(chat_json_example))
+    #print(validate_chat_packet_api_call(chat_json_example))
 
 
 
