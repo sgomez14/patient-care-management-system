@@ -2,6 +2,7 @@ from flask import Flask, Response
 from flask_restful import Api, Resource, abort
 from src.device import device
 from src.chat import chat, chat_utils
+from src.users.users import authenticate_login
 
 application = Flask(__name__)
 # app = application
@@ -232,6 +233,23 @@ class StoreChat(Resource):
                         "code": post_result[-1]}
 
 
+# user module section
+
+class AuthenticateLogin(Resource):
+    def get(self, login_json):
+
+        authenticate_result = authenticate_login(login_json)
+
+        if api_call_successful(operation_success=authenticate_result[0],
+                               msg=authenticate_result[1],
+                               error_code=authenticate_result[2]):
+
+            return {"result": authenticate_result[0],
+                    "message": authenticate_result[1],
+                    "http_code": authenticate_result[2],
+                    "user_roles": authenticate_result[-1]}
+
+
 api.add_resource(HomePage, "/")
 
 # endpoints for device module
@@ -248,5 +266,8 @@ api.add_resource(GetChatBySessionID, "/chat/get-chat-by-session-id/<string:token
 api.add_resource(GetChatByMessageOwner, "/chat/get-chat-by-message-owner/<string:token_and_id_json>")
 api.add_resource(StoreChat, "/chat/store-chat/<string:chat_packet>")
 
+# endpoints for users module
+api.add_resource(AuthenticateLogin, "/users/authenticate-login/<string:login_json>")
+
 if __name__ == "__main__":
-    application.run(debug=True)
+    application.run(debug=True, use_debugger=True)

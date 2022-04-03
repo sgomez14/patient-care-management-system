@@ -29,9 +29,9 @@ def test_find_user_not_in_db() -> None:
 def test_authenticate_login_valid() -> None:
     """This function tests authenticating a user login that is valid."""
 
-    login_json = {'user_id': 42530, 'password': 'ec530'}
+    login_json = '{"user_id": 42530, "password": "ec530"}'
 
-    login_json = json.dumps(login_json)
+    # login_json = json.dumps(login_json)
 
     authenticate_login_results = authenticate_login(login_json)
 
@@ -56,4 +56,3 @@ def test_authenticate_login_not_valid_wrong_password() -> None:
     expected_result = False
 
     assert test_result == expected_result
-

@@ -142,15 +142,16 @@ def authenticate_login(login_json: str):
 
     # validate password
     passwords_match = password == user_record["password"]
+    roles = user_record["roles"]
 
     if passwords_match:
         msg = "Authenticating Login: Authentication successful."
         logging.info(msg)
-        return [True, msg, ApiResult.SUCCESS.value]
+        return [True, msg, ApiResult.SUCCESS.value, roles]
     else:
         msg = "Authenticating Login: Authentication not successful."
         logging.info(msg)
-        return [False, msg, ApiResult.CONFLICT.value]
+        return [False, msg, ApiResult.CONFLICT.value, "n/a"]
 
 
 
