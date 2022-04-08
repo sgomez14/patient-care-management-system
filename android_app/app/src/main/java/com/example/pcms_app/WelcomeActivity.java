@@ -5,12 +5,9 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
 import java.util.concurrent.Executors;
@@ -28,13 +25,14 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
+        // Instantiate views
         doc1 = findViewById(R.id.doc1);
         doc2 = findViewById(R.id.doc2);
         star1 = findViewById(R.id.star1);
         star2 = findViewById(R.id.star2);
         btnNext = findViewById(R.id.btnNext);
 
-
+        // Auto reload animation every seconds
         ScheduledExecutorService scheduledExecutorService =
                 Executors.newSingleThreadScheduledExecutor();
         scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
@@ -51,6 +49,8 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         }, 0, 1, TimeUnit.SECONDS);
 
+
+        // doc1 and doc2 animations pop up
         doc1.setTranslationY(300);
         doc2.setTranslationY(100);
 
@@ -60,8 +60,7 @@ public class WelcomeActivity extends AppCompatActivity {
         doc1.animate().translationY(0).alpha(1).setDuration(1500).setStartDelay(100).start();
         doc2.animate().translationY(0).alpha(1).setDuration(1000).setStartDelay(100).start();
 
-
-
+        // Next button to start LoginActivity
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,10 +71,10 @@ public class WelcomeActivity extends AppCompatActivity {
 
     }
 
+    // Shake animation
     private void shake(ImageView img) {
         Animation shake = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake);
         img.startAnimation(shake);
     }
-
 
 }

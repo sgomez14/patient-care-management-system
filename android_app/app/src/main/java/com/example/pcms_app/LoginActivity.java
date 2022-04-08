@@ -3,12 +3,8 @@ package com.example.pcms_app;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.viewpager.widget.ViewPager;
-
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.EditText;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 public class LoginActivity extends AppCompatActivity {
@@ -24,6 +20,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Instantiate views
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
         btnGoogle = findViewById(R.id.btnGoogle);
@@ -31,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
         userName = findViewById(R.id.userName);
         password = findViewById(R.id.password);
 
+        // Login UI views translate upward from bottom of screen
         userName.setTranslationY(300);
         password.setTranslationY(300);
         btnLogin.setTranslationY(300);

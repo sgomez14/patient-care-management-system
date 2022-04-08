@@ -12,7 +12,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Start WelcomeActivity
         Intent intent = new Intent(this, WelcomeActivity.class);
         startActivity(intent);
     }
+
+
+
 }
