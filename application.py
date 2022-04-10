@@ -31,7 +31,7 @@ def api_call_successful(operation_success: bool, msg: str, error_code: int) -> b
 
 class HomePage(Resource):
     def get(self):
-        return "Landing page for Device Module API"
+        return {"Home": "Landing page for Device Module API"}
 
 
 class ValidateJSON(Resource):
