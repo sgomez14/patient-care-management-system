@@ -2,10 +2,14 @@ package com.example.pcms_app;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -22,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText userName, password;
     private float v = 0;
     private String role = "";
+    private int userID;
     private static final String DOCTOR = "doctor";
     private static final String PATIENT = "patient";
     private static final String API_BASE_URL = "http://10.0.2.2:5000/users/authenticate-login/";
@@ -44,13 +49,20 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Authenticate username and password
-                callAuthenticateLoginAndReturnRole();
-                if (role.contains(DOCTOR)) {
-                    // doctor role, DO SOMETHING
+
+                try{
+                    // Authenticate username and password
+                    callAuthenticateLoginAndReturnRole();
+//                    goToAssignments(role, userID);
+//                    if (role.contains(DOCTOR)) {
+//                        // doctor role, DO SOMETHING
+//                    }
+//                    else if (role.contains(PATIENT)){
+//                        // patient role, DO SOMETHING
+//                    }
                 }
-                else if (role.contains(PATIENT)){
-                    // patient role, DO SOMETHING
+                catch (Exception e){
+                    Log.e("PCMS Exception", e.getMessage());
                 }
             }
         });
@@ -97,6 +109,12 @@ public class LoginActivity extends AppCompatActivity {
                         Log.e("PCMS onResponse", response.toString());
                         try {
                             role = response.getString("user_roles");
+                            Log.i("PCMS", "Logged in user has role: " + role);
+
+                            // grab the userID
+                            userID = Integer.parseInt(userName.getText().toString());
+
+                            goToAssignments(role, userID);
                         }
                         catch (Exception e) {
                             Log.e("PCMS Exception", e.getMessage());
@@ -110,8 +128,14 @@ public class LoginActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         Log.e("PCMS onErrorResponse", error.toString());
                         try {
-                            String body = new String(error.networkResponse.data, "UTF-8");
-                        } catch (UnsupportedEncodingException e) {
+//                            String body = new String(error.networkResponse.data, "UTF-8");
+                            NetworkResponse response = error.networkResponse;
+                            String errorMsg = "";
+                            if(response != null && response.data != null){
+                                String errorString = new String(response.data);
+                                Log.i("log error", errorString);
+                            }
+                        } catch (/*UnsupportedEncodingException*/ Exception e) {
                             Log.e("PCMS Exception", e.getMessage());
                         }
                     }
@@ -133,5 +157,26 @@ public class LoginActivity extends AppCompatActivity {
             Log.d("PCMS Exception", e.getMessage());
             return API_BASE_URL;
         }
+    }
+
+    // function that initiates the Assignments activity
+    // example of passing Bundle from one activity to another
+    // https://www.geeksforgeeks.org/bundle-in-android-with-example/
+    private void goToAssignments(String userRole, int userID){
+        // create intent to go to the Assignments activity
+        Intent assignmentsIntent = new Intent(this, AssignmentsActivity.class);
+
+        // create Bundle to pass user role and user id to the next activity
+        Bundle assignmentsBundle = new Bundle();
+
+        // add the userRole and userID to bundle
+        assignmentsBundle.putString("userRole", userRole);
+        assignmentsBundle.putInt("userID", userID);
+
+        // pair the bundle with the intent
+        assignmentsIntent.putExtras(assignmentsBundle);
+
+        // start the intent
+        startActivity(assignmentsIntent);
     }
 }

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PCMS_App</string>
+    <string name="assignments_label">Assignments Label</string>
 </resources>
