@@ -2,7 +2,7 @@ from flask import Flask, Response
 from flask_restful import Api, Resource, abort
 from src.device import device
 from src.chat import chat, chat_utils
-from src.users.users import authenticate_login
+from src.users.users import authenticate_login, get_user_assignments
 
 application = Flask(__name__)
 # app = application
@@ -31,7 +31,7 @@ def api_call_successful(operation_success: bool, msg: str, error_code: int) -> b
 
 class HomePage(Resource):
     def get(self):
-        return "Landing page for Device Module API"
+        return "Landing page for the Patient Care Management System API"
 
 
 class ValidateJSON(Resource):
@@ -250,6 +250,20 @@ class AuthenticateLogin(Resource):
                     "user_roles": authenticate_result[-1]}
 
 
+class GetUserAssignments(Resource):
+    def get(self, user_id):
+        assignments_result = get_user_assignments(user_id)
+
+        if api_call_successful(operation_success=assignments_result[0],
+                               msg=assignments_result[1],
+                               error_code=assignments_result[2]):
+            return {"result":     assignments_result[0],
+                    "message":    assignments_result[1],
+                    "http_code":  assignments_result[2],
+                    "assignments": assignments_result[-1]}
+
+
+# All API endpoints
 api.add_resource(HomePage, "/")
 
 # endpoints for device module
@@ -268,6 +282,7 @@ api.add_resource(StoreChat, "/chat/store-chat/<string:chat_packet>")
 
 # endpoints for users module
 api.add_resource(AuthenticateLogin, "/users/authenticate-login/<string:login_json>")
+api.add_resource(GetUserAssignments, "/users/get-assignments/<int:user_id>")
 
 if __name__ == "__main__":
     application.run(debug=True, use_debugger=True)
