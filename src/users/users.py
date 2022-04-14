@@ -58,6 +58,11 @@ class AssignmentsDB:
             logging.error(msg)
             return [False, msg, ApiResult.CONFLICT.value]
 
+        # check if user exists
+        find_user_results = UsersDB.find_user(user_id)
+        if not find_user_results[0]:  # could not find user
+            return find_user_results
+
         # define search filter
         find_filter = {"$or": [{"doctor.user_id": user_id}, {"patient.user_id": user_id}]}
 
@@ -210,6 +215,81 @@ class UsersDB:
         else:  # the find user query failed
             return find_user_results
 
+    @staticmethod
+    def get_patient_summary(user_id: int):
+        """This function gets patient summary associated with user_id"""
+
+        # first check if argument is an int
+        if not isinstance(user_id, int):
+            msg = f"Querying Users Database: user_id \"{user_id}\" is not type int."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
+
+        # query user database to get first and last names
+        find_user_results = UsersDB.find_user(user_id)
+
+        # check if finding the user was successful
+        if find_user_results[0]:
+            patient_record = find_user_results[-1]  # data is returned in the last index
+            first_name = patient_record["first_name"]
+            last_name = patient_record["last_name"]    # data is returned in the last index
+
+            # concatenate first and last name
+            full_name = f"{first_name} {last_name}"
+
+            # log result
+            msg = f"Querying User Database: Full name for user_id \"{user_id}\" is {full_name}"
+            logging.info(msg)
+
+            # checking is key exists --> https://www.stackvidhya.com/check-if-key-exists-in-dictionary-python/
+            # check if this user has a summary entry in their record
+            if "summary" not in patient_record:
+                msg = f"Querying Users Database: user_id \"{user_id}\" does not have a summary entry in their record."
+                logging.error(msg)
+                return [False, msg, ApiResult.NOT_FOUND.value]
+
+            # handling KeyError exception --> https://realpython.com/python-keyerror/
+            # this block extract data from various categories, if the key doesn't exist, then handle exception
+            try:
+                # extract the summary data from patient record
+                summary_data = patient_record["summary"]
+
+                # get the height data
+                height = summary_data["height"]  # this will return a string in format of --> # ft. # in.
+
+                # get the weight data
+                weight = summary_data["weight"]  # this will return a string in format of --> # lbs.
+
+                # get the allergies data
+                allergies = summary_data["allergies"]  # this will return a list of strings
+
+                # get the medications data
+                medication = summary_data["medication"]  # this will return a list of strings
+
+                # get the medical conditions
+                medical_conditions = summary_data["medical_conditions"]  # this will return a list of strings
+
+                # construct the dictionary to return to the API caller
+                summary = {
+                    "user_id": user_id,
+                    "name": full_name,
+                    "height": height,
+                    "weight": weight,
+                    "allergies": allergies,
+                    "medication": medication,
+                    "medical_conditions": medical_conditions
+                }
+
+                return [True, msg, ApiResult.SUCCESS.value, summary]
+
+            except KeyError:
+                msg = f"Querying Users Database: user_id \"{user_id}\" has a missing category in their summary."
+                logging.error(msg)
+                return [False, msg, ApiResult.NOT_FOUND.value]
+
+        else:  # the find user query failed
+            return find_user_results
+
 
 def authenticate_login(login_json: str):
 
@@ -255,9 +335,14 @@ def authenticate_login(login_json: str):
         return [False, msg, ApiResult.CONFLICT.value, "n/a"]
 
 
-def get_user_assignments(user_id):
+def get_user_assignments(user_id: int):
 
     return AssignmentsDB.getAssignments(user_id)
+
+
+def get_patient_summary(user_id: int):
+
+    return UsersDB.get_patient_summary(user_id)
 
 
 

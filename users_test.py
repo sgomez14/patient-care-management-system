@@ -1,5 +1,5 @@
 import json
-from src.users.users import UsersDB, authenticate_login, get_user_assignments
+from src.users.users import UsersDB, authenticate_login, get_user_assignments, get_patient_summary
 
 
 def test_find_user_in_db() -> None:
@@ -75,6 +75,68 @@ def test_get_assignments_with_valid_user_id() -> None:
 
     for test_case in test_cases:
         result = get_user_assignments(test_case)
+
+        test_result.append(result)
+
+    assert test_result == expected_result
+
+
+def test_get_assignments_with_invalid_user_id() -> None:
+    """This function tests getting the assignments for invalid user_ids."""
+
+    test_cases = [12]
+
+    expected_result = [
+        [False, 'Querying Users Database: user_id "12" not found.', 404]
+
+    ]
+
+    test_result = []
+
+    for test_case in test_cases:
+        result = get_user_assignments(test_case)
+
+        test_result.append(result)
+
+    assert test_result == expected_result
+
+
+def test_get_patient_summary_with_valid_user_id() -> None:
+    """This function tests getting the patient summaries for user_ids."""
+
+    test_cases = [321, 123]
+
+    expected_result = [
+        [True, 'Querying User Database: Full name for user_id "321" is test_patient_first test_patient_last', 200,
+         {'user_id': 321, 'name': 'test_patient_first test_patient_last', 'height': '5 ft. 1 in.', 'weight': '150 lbs.',
+          'allergies': ['rain'], 'medication': ['happiness'], 'medical_conditions': ['high blood pressure']}],
+
+        [False, 'Querying Users Database: user_id "123" does not have a summary entry in their record.', 404]
+    ]
+
+    test_result = []
+
+    for test_case in test_cases:
+        result = get_patient_summary(test_case)
+
+        test_result.append(result)
+
+    assert test_result == expected_result
+
+
+def test_get_patient_summary_with_invalid_user_id() -> None:
+    """This function tests getting the patient summaries with invalid user_ids."""
+
+    test_cases = [12]
+
+    expected_result = [
+        [False, 'Querying Users Database: user_id "12" not found.', 404]
+    ]
+
+    test_result = []
+
+    for test_case in test_cases:
+        result = get_patient_summary(test_case)
 
         test_result.append(result)
 
