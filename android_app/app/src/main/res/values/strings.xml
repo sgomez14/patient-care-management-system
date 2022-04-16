@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">PCMS_App</string>
     <string name="assignments_label">Assignments Label</string>
+    <string name="patient_record_label">Patient Record</string>
+    <string name="patient_summary_label">Summary</string>
+    <string name="record_btn">Record</string>
+    <string name="chat_btn">Chat</string>
 </resources>

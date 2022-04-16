@@ -2,8 +2,11 @@ package com.example.pcms_app;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -82,6 +85,13 @@ public class AssignmentsActivity extends AppCompatActivity {
         // make call to Users REST API
         getAssignments(userID);
 
+        // create the listner that takes user to the Patient Record Activity
+        lvAssignments.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                sendRowDataToRecordActivity(position);
+            }
+        });
 
 
 
@@ -174,11 +184,48 @@ public class AssignmentsActivity extends AppCompatActivity {
                 name = record.getString("name");
                 recordUserID = record.getString("user_id");
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e("PCMS", "Error Parsing JSON when adding row data: " +
+                        e.getMessage());
             }
             String rowData = name + ", ID: " + recordUserID;
             assignmentList.add(rowData);
         }
         adapter.notifyDataSetChanged();
     }
-}
+
+    private void sendRowDataToRecordActivity(int index){
+        String name = "";
+        String recordUserID = "";
+        JSONObject record = assignmentsListJSON.get(index); // grab the row in the list
+        try {
+            // every JSON record --> {"name": full_name, "user_id": user_id}
+            name = record.getString("name");
+            recordUserID = record.getString("user_id");
+
+            // create intent to go to the Patient Record Activity
+            goToPatientRecord(name, Integer.parseInt(recordUserID));
+
+        } catch (JSONException e) {
+            Log.e("PCMS", "Error Parsing JSON when getting row data: " +
+                    e.getMessage());
+        }
+    }
+
+    private void goToPatientRecord(String userRole, int userID){
+        // create intent to go to the Patient Record activity
+        Intent patientRecordIntent = new Intent(this, PatientRecordActivity.class);
+
+        // create Bundle to pass user role and user id to the next activity
+        Bundle patientRecordBundle = new Bundle();
+
+        // add the userRole and userID to bundle
+        patientRecordBundle.putString("userRole", userRole);
+        patientRecordBundle.putInt("userID", userID);
+
+        // pair the bundle with the intent
+        patientRecordIntent.putExtras(patientRecordBundle);
+
+        // start the intent
+        startActivity(patientRecordIntent);
+    }
+};
