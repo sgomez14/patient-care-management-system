@@ -14,6 +14,9 @@
         android:theme="@style/Theme.PCMS_App"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".AssignmentsActivity"
             android:exported="false" />
         <activity

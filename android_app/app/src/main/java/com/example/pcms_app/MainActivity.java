@@ -13,10 +13,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Start WelcomeActivity
-        Intent intent = new Intent(this, WelcomeActivity.class);
+        //Intent intent = new Intent(this, WelcomeActivity.class);
+        Intent intent = new Intent(this, ChatActivity.class);
         startActivity(intent);
     }
-
-
-
 }
