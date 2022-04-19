@@ -26,6 +26,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText userName, password;
     private float v = 0;
     private String role = "";
+    private String firstName = "";
+    private String lastName = "";
     private int userID;
     private static final String DOCTOR = "doctor";
     private static final String PATIENT = "patient";
@@ -164,14 +166,26 @@ public class LoginActivity extends AppCompatActivity {
     // https://www.geeksforgeeks.org/bundle-in-android-with-example/
     private void goToAssignments(String userRole, int userID){
         // create intent to go to the Assignments activity
-        Intent assignmentsIntent = new Intent(this, AssignmentsActivity.class);
+        //Intent assignmentsIntent = new Intent(this, AssignmentsActivity.class);
 
+        Intent assignmentsIntent = new Intent(this, ChatActivity.class);
         // create Bundle to pass user role and user id to the next activity
         Bundle assignmentsBundle = new Bundle();
 
         // add the userRole and userID to bundle
-        assignmentsBundle.putString("userRole", userRole);
-        assignmentsBundle.putInt("userID", userID);
+        // Mandy Yao 42530
+       // assignmentsBundle.putString("senderUserRole", userRole);
+        assignmentsBundle.putInt("senderUserID", userID);
+
+//        // Santiago Gomez 20544
+//        assignmentsBundle.putInt("receiverUserID", 20544);
+//        assignmentsBundle.putString("receiverFirstName", "Santiago");
+//        assignmentsBundle.putString("receiverLastName", "Gomez");
+
+        //Mandy Yao 42530
+        assignmentsBundle.putInt("receiverUserID", 42530);
+        assignmentsBundle.putString("receiverFirstName", "Mandy");
+        assignmentsBundle.putString("receiverLastName", "Yao");
 
         // pair the bundle with the intent
         assignmentsIntent.putExtras(assignmentsBundle);
