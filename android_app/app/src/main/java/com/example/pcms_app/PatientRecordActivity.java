@@ -18,6 +18,7 @@ public class PatientRecordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_patient_record);
     }
 
+
     // this function parses the summary JSON within the response JSON
     private ArrayList<JSONObject> parseSummaryJSON(JSONArray assignments){
         ArrayList<JSONObject> assignmentList = new ArrayList<JSONObject>();

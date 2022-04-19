@@ -32,6 +32,7 @@ public class AssignmentsActivity extends AppCompatActivity {
     private static final String PATIENT = "patient";
     private String userRole;
     private int userID;
+    private String userName;
 
     // list to store the assignments for user
     private ArrayList<String> assignmentList;
@@ -211,16 +212,28 @@ public class AssignmentsActivity extends AppCompatActivity {
         }
     }
 
-    private void goToPatientRecord(String userRole, int userID){
+    private void goToPatientRecord(String rowName, int rowID){
         // create intent to go to the Patient Record activity
         Intent patientRecordIntent = new Intent(this, PatientRecordActivity.class);
 
         // create Bundle to pass user role and user id to the next activity
         Bundle patientRecordBundle = new Bundle();
 
-        // add the userRole and userID to bundle
-        patientRecordBundle.putString("userRole", userRole);
-        patientRecordBundle.putInt("userID", userID);
+        // add sender and receiver info for Chat
+        patientRecordBundle.putInt("senderUserID", userID);
+        patientRecordBundle.putInt("receiverUserID", rowID);
+
+        if (userRole.equals(DOCTOR)){
+            // add the patient name and ID to bundle
+            patientRecordBundle.putString("patientName", rowName);
+            patientRecordBundle.putInt("patientID", rowID);
+        }
+        else{
+            // add the patient name and ID to bundle
+            patientRecordBundle.putString("patientName", userName);
+            patientRecordBundle.putInt("patientID", userID);
+        }
+
 
         // pair the bundle with the intent
         patientRecordIntent.putExtras(patientRecordBundle);
