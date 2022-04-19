@@ -2,7 +2,7 @@ from flask import Flask, Response
 from flask_restful import Api, Resource, abort
 from src.device import device
 from src.chat import chat, chat_utils
-from src.users.users import authenticate_login, get_user_assignments
+from src.users.users import authenticate_login, get_user_assignments, get_patient_summary, get_user_fullname
 
 application = Flask(__name__)
 # app = application
@@ -265,6 +265,45 @@ class GetUserAssignments(Resource):
                     "assignments": assignments_result[-1]}
 
 
+class GetPatientSummary(Resource):
+    def get(self, user_id):
+        summary_result = get_patient_summary(user_id)
+
+        if api_call_successful(operation_success=summary_result[0],
+                               msg=summary_result[1],
+                               error_code=summary_result[2]):
+            return {"result": summary_result[0],
+                    "message": summary_result[1],
+                    "http_code": summary_result[2],
+                    "summary": summary_result[-1]}
+
+
+class GetUserFullnameConcatenated(Resource):
+    def get(self, user_id):
+        name_result = get_user_fullname(user_id, concatenated=True)
+
+        if api_call_successful(operation_success=name_result[0],
+                               msg=name_result[1],
+                               error_code=name_result[2]):
+            return {"result": name_result[0],
+                    "message": name_result[1],
+                    "http_code": name_result[2],
+                    "name": name_result[-1]}
+
+
+class GetUserFullname(Resource):
+    def get(self, user_id):
+        name_result = get_user_fullname(user_id, concatenated=False)
+
+        if api_call_successful(operation_success=name_result[0],
+                               msg=name_result[1],
+                               error_code=name_result[2]):
+            return {"result": name_result[0],
+                    "message": name_result[1],
+                    "http_code": name_result[2],
+                    "name": name_result[-1]}
+
+
 # All API endpoints
 api.add_resource(HomePage, "/")
 
@@ -285,6 +324,9 @@ api.add_resource(StoreChat, "/chat/store-chat/<string:chat_packet>")
 # endpoints for users module
 api.add_resource(AuthenticateLogin, "/users/authenticate-login/<string:login_json>")
 api.add_resource(GetUserAssignments, "/users/get-assignments/<int:user_id>")
+api.add_resource(GetPatientSummary, "/users/get-patient-summary/<int:user_id>")
+api.add_resource(GetUserFullnameConcatenated, "/users/get-user-fullname-concatenated/<int:user_id>")
+api.add_resource(GetUserFullname, "/users/get-user-fullname/<int:user_id>")
 
 if __name__ == "__main__":
     application.run(debug=True, use_debugger=True)
