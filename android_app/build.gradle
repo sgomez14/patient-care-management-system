@@ -15,12 +15,12 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
-        maven { url "https://chatsdk.jfrog.io/artifactory/release/chat-sdk-android" }
-        maven { url "https://chatsdk.jfrog.io/artifactory/release/chatkit" }
-        maven { url "https://chatsdk.jfrog.io/artifactory/release/matisse" }
-        maven { url "https://chatsdk.jfrog.io/artifactory/release/material-search-view" }
-        maven { url "https://chatsdk.jfrog.io/artifactory/release/android-image-cropper" }
+//        maven { url 'https://jitpack.io' }
+//        maven { url "https://chatsdk.jfrog.io/artifactory/release/chat-sdk-android" }
+//        maven { url "https://chatsdk.jfrog.io/artifactory/release/chatkit" }
+//        maven { url "https://chatsdk.jfrog.io/artifactory/release/matisse" }
+//        maven { url "https://chatsdk.jfrog.io/artifactory/release/material-search-view" }
+//        maven { url "https://chatsdk.jfrog.io/artifactory/release/android-image-cropper" }
     }
 }
 
