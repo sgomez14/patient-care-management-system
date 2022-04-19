@@ -186,7 +186,7 @@ class UsersDB:
             return [False, msg, ApiResult.CONFLICT.value]
 
     @staticmethod
-    def get_user_fullname(user_id: int):
+    def get_user_fullname(user_id: int, concatenated: bool = True):
         """This function gets full name associated with user_id"""
 
         # first check if argument is an int
@@ -203,8 +203,11 @@ class UsersDB:
             first_name = find_user_results[-1]["first_name"]  # data is returned in the last index
             last_name = find_user_results[-1]["last_name"]    # data is returned in the last index
 
-            # concatenate first and last name
-            full_name = f"{first_name} {last_name}"
+            if concatenated:
+                # concatenate first and last name
+                full_name = f"{first_name} {last_name}"
+            else:
+                full_name = {"first_name": first_name, "last_name": last_name}
 
             # log result
             msg = f"Querying User Database: Full name for user_id \"{user_id}\" is {full_name}"
@@ -343,6 +346,12 @@ def get_user_assignments(user_id: int):
 def get_patient_summary(user_id: int):
 
     return UsersDB.get_patient_summary(user_id)
+
+
+def get_user_fullname(user_id: int, concatenated: bool):
+
+    return UsersDB.get_user_fullname(user_id, concatenated)
+
 
 
 
