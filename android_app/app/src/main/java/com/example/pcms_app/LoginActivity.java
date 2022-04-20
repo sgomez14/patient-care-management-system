@@ -31,7 +31,8 @@ public class LoginActivity extends AppCompatActivity {
     private int userID;
     private static final String DOCTOR = "doctor";
     private static final String PATIENT = "patient";
-    private static final String API_BASE_URL = "http://10.0.2.2:5000/users/authenticate-login/";
+//    private static final String API_BASE_URL = "http://10.0.2.2:5000/users/authenticate-login/";
+    private static final String API_BASE_URL = "http://192.168.99.61:5000/users/authenticate-login/"; // Santiago home server
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
