@@ -166,11 +166,13 @@ public class LoginActivity extends AppCompatActivity {
     // https://www.geeksforgeeks.org/bundle-in-android-with-example/
     private void goToAssignments(String userRole, int userID){
         // create intent to go to the Assignments activity
-        //Intent assignmentsIntent = new Intent(this, AssignmentsActivity.class);
+        Intent assignmentsIntent = new Intent(this, AssignmentsActivity.class);
 
-        Intent assignmentsIntent = new Intent(this, ChatActivity.class);
+        //Intent assignmentsIntent = new Intent(this, ChatActivity.class);
         // create Bundle to pass user role and user id to the next activity
         Bundle assignmentsBundle = new Bundle();
+        assignmentsBundle.putString("userRole", userRole);
+        assignmentsBundle.putInt("userId", userID);
 
         // add the userRole and userID to bundle
         // Mandy Yao 42530
