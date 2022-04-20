@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "44470108245",
+    "project_id": "medical-application-b0dfa",
+    "storage_bucket": "medical-application-b0dfa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44470108245:android:b9b58fcdf93b9177c6d4dc",
+        "android_client_info": {
+          "package_name": "com.example.pcms_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "44470108245-jk726i1b8p29khlls3gpmm9cj4numun3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuHRpLMWm8y8Vs1wDxpi72-dNgkGnMbYQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "44470108245-jk726i1b8p29khlls3gpmm9cj4numun3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

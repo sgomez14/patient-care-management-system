@@ -68,7 +68,6 @@ public class WelcomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 
     // Shake animation
@@ -76,5 +75,4 @@ public class WelcomeActivity extends AppCompatActivity {
         Animation shake = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake);
         img.startAnimation(shake);
     }
-
 }

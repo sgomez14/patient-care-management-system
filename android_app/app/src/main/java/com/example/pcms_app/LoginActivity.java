@@ -22,14 +22,18 @@ import java.net.URLEncoder;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static final String API_BASE_URL = "http://10.0.2.2:5000/users/authenticate-login/";
+//    private static final String API_BASE_URL = "http://192.168.99.61:5000/users/authenticate-login/"; // Santiago home server
+
     private AppCompatButton btnGoogle, btnLogin;
     private EditText userName, password;
     private float v = 0;
     private String role = "";
+    private String firstName = "";
+    private String lastName = "";
     private int userID;
     private static final String DOCTOR = "doctor";
     private static final String PATIENT = "patient";
-    private static final String API_BASE_URL = "http://10.0.2.2:5000/users/authenticate-login/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +57,6 @@ public class LoginActivity extends AppCompatActivity {
                 try{
                     // Authenticate username and password
                     callAuthenticateLoginAndReturnRole();
-//                    goToAssignments(role, userID);
-//                    if (role.contains(DOCTOR)) {
-//                        // doctor role, DO SOMETHING
-//                    }
-//                    else if (role.contains(PATIENT)){
-//                        // patient role, DO SOMETHING
-//                    }
                 }
                 catch (Exception e){
                     Log.e("PCMS Exception", e.getMessage());
@@ -166,6 +163,7 @@ public class LoginActivity extends AppCompatActivity {
         // create intent to go to the Assignments activity
         Intent assignmentsIntent = new Intent(this, AssignmentsActivity.class);
 
+//        Intent assignmentsIntent = new Intent(this, ChatActivity.class);
         // create Bundle to pass user role and user id to the next activity
         Bundle assignmentsBundle = new Bundle();
 

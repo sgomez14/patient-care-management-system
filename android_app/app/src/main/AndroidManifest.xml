@@ -14,6 +14,13 @@
         android:theme="@style/Theme.PCMS_App"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".PatientRecordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChatActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="false" />
+        <activity
             android:name=".AssignmentsActivity"
             android:exported="false" />
         <activity
@@ -31,6 +38,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".firebase.MessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
