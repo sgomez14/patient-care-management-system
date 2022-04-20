@@ -22,7 +22,6 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -32,7 +31,6 @@ public class AssignmentsActivity extends AppCompatActivity {
     private static final String PATIENT = "patient";
     private String userRole;
     private int userID;
-    private String userName;
 
     // list to store the assignments for user
     private ArrayList<String> assignmentList;
@@ -75,32 +73,25 @@ public class AssignmentsActivity extends AppCompatActivity {
         if (userRole.contains(DOCTOR)) {
             // doctor role, DO SOMETHING
             tvAssignmentLabel.setText("Assigned Patients");
-//            assignmentList.add("Santiago Gomez");
         }
         else if (userRole.contains(PATIENT)){
             // patient role, DO SOMETHING
             tvAssignmentLabel.setText("Assigned Doctors");
-//            assignmentList.add("Mandy Yao");
         }
 
         // make call to Users REST API
         getAssignments(userID);
 
-        // create the listner that takes user to the Patient Record Activity
+        // create the listener that takes user to the Patient Record Activity
         lvAssignments.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 sendRowDataToRecordActivity(position);
             }
         });
+    } /* end of onCreate() */
 
-
-
-
-
-    }
-
-    // Function to authenticate username and password through Restful API
+    // Function to get the user's assignments through Restful API
     private void getAssignments(int userID) {
 
         // Instantiate request queue using volley to call Restful API
@@ -128,8 +119,6 @@ public class AssignmentsActivity extends AppCompatActivity {
                                             response.getJSONArray("assignments")));
 
                             addRowData();
-
-
                         }
                         catch (Exception e) {
                             Log.e("PCMS Exception", e.getMessage());
@@ -157,7 +146,7 @@ public class AssignmentsActivity extends AppCompatActivity {
                 }
         );
         requestQueue.add(jsonObjectRequest);
-    }
+    } /* end of getAssignments() */
 
     // this function parses the assignments records within the response JSON
     private ArrayList<JSONObject> parseAssignmentsJSON(JSONArray assignments){
@@ -174,7 +163,7 @@ public class AssignmentsActivity extends AppCompatActivity {
         }
 
         return assignmentList;
-    }
+    } /* end of parseAssignmentsJSON() */
 
     private void addRowData(){
         // add row elements to the listview
@@ -192,7 +181,7 @@ public class AssignmentsActivity extends AppCompatActivity {
             assignmentList.add(rowData);
         }
         adapter.notifyDataSetChanged();
-    }
+    } /* end of addRowData() */
 
     private void sendRowDataToRecordActivity(int index){
         String name = "";
@@ -210,7 +199,7 @@ public class AssignmentsActivity extends AppCompatActivity {
             Log.e("PCMS", "Error Parsing JSON when getting row data: " +
                     e.getMessage());
         }
-    }
+    } /* end of sendRowDataToRecordActivity() */
 
     private void goToPatientRecord(String rowName, int rowID){
         // create intent to go to the Patient Record activity
@@ -220,25 +209,28 @@ public class AssignmentsActivity extends AppCompatActivity {
         Bundle patientRecordBundle = new Bundle();
 
         // add sender and receiver info for Chat
-        patientRecordBundle.putInt("senderUserID", userID);
-        patientRecordBundle.putInt("receiverUserID", rowID);
+        patientRecordBundle.putInt("senderUserID", userID);  // individual using the app is always the sender in chat
+        patientRecordBundle.putInt("receiverUserID", rowID); // individual selected from list is always the receiver in chat
+
+        // split the rowName into separate first and last
+        String[] fullNameSplit = rowName.split(" ");
+        patientRecordBundle.putString("receiverFirstName", fullNameSplit[0]);
+        patientRecordBundle.putString("receiverLastName", fullNameSplit[1]);
 
         if (userRole.equals(DOCTOR)){
-            // add the patient name and ID to bundle
-            patientRecordBundle.putString("patientName", rowName);
+            // the user is a doctor and they tapped on patient, so pass along name and ID in the row data to bundle
             patientRecordBundle.putInt("patientID", rowID);
         }
         else{
-            // add the patient name and ID to bundle
-            patientRecordBundle.putString("patientName", userName);
+            // the user in this case is the patient, so just pass their userID along
             patientRecordBundle.putInt("patientID", userID);
-        }
 
+        }
 
         // pair the bundle with the intent
         patientRecordIntent.putExtras(patientRecordBundle);
 
         // start the intent
         startActivity(patientRecordIntent);
-    }
+    } /* end of goToPatientRecord() */
 };
