@@ -55,13 +55,6 @@ public class LoginActivity extends AppCompatActivity {
                 try{
                     // Authenticate username and password
                     callAuthenticateLoginAndReturnRole();
-//                    goToAssignments(role, userID);
-//                    if (role.contains(DOCTOR)) {
-//                        // doctor role, DO SOMETHING
-//                    }
-//                    else if (role.contains(PATIENT)){
-//                        // patient role, DO SOMETHING
-//                    }
                 }
                 catch (Exception e){
                     Log.e("PCMS Exception", e.getMessage());
@@ -166,26 +159,15 @@ public class LoginActivity extends AppCompatActivity {
     // https://www.geeksforgeeks.org/bundle-in-android-with-example/
     private void goToAssignments(String userRole, int userID){
         // create intent to go to the Assignments activity
-        //Intent assignmentsIntent = new Intent(this, AssignmentsActivity.class);
+        Intent assignmentsIntent = new Intent(this, AssignmentsActivity.class);
 
-        Intent assignmentsIntent = new Intent(this, ChatActivity.class);
+//        Intent assignmentsIntent = new Intent(this, ChatActivity.class);
         // create Bundle to pass user role and user id to the next activity
         Bundle assignmentsBundle = new Bundle();
 
         // add the userRole and userID to bundle
-        // Mandy Yao 42530
-       // assignmentsBundle.putString("senderUserRole", userRole);
-        assignmentsBundle.putInt("senderUserID", userID);
-
-//        // Santiago Gomez 20544
-//        assignmentsBundle.putInt("receiverUserID", 20544);
-//        assignmentsBundle.putString("receiverFirstName", "Santiago");
-//        assignmentsBundle.putString("receiverLastName", "Gomez");
-
-        //Mandy Yao 42530
-        assignmentsBundle.putInt("receiverUserID", 42530);
-        assignmentsBundle.putString("receiverFirstName", "Mandy");
-        assignmentsBundle.putString("receiverLastName", "Yao");
+        assignmentsBundle.putString("userRole", userRole);
+        assignmentsBundle.putInt("userID", userID);
 
         // pair the bundle with the intent
         assignmentsIntent.putExtras(assignmentsBundle);
