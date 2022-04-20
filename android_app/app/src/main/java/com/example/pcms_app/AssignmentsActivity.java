@@ -27,6 +27,9 @@ import java.util.ArrayList;
 
 public class AssignmentsActivity extends AppCompatActivity {
 
+    private static final String API_BASE_URL = "http://10.0.2.2:5000/users/get-assignments/";
+//    private static final String API_BASE_URL = "http://192.168.99.61:5000/users/get-assignments/"; // Santiago home server
+
     private static final String DOCTOR = "doctor";
     private static final String PATIENT = "patient";
     private String userRole;
@@ -42,8 +45,6 @@ public class AssignmentsActivity extends AppCompatActivity {
     private TextView tvAssignmentLabel;
     private ListView lvAssignments;
 
-//    private static final String API_BASE_URL = "http://10.0.2.2:5000/users/get-assignments/";
-    private static final String API_BASE_URL = "http://192.168.99.61:5000/users/get-assignments/"; // Santiago home server
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
