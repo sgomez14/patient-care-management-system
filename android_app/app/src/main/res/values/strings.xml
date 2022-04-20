@@ -5,4 +5,6 @@
     <string name="patient_summary_label">Summary</string>
     <string name="record_btn">Record</string>
     <string name="chat_btn">Chat</string>
+    <string name="patient_name">Patient Name</string>
+
 </resources>

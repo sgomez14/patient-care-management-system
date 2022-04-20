@@ -19,12 +19,13 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btnRecord"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Record" />
+<!--            delete once confirmed this button is not needed-->
+<!--            <Button-->
+<!--                android:id="@+id/btnRecord"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Record" />-->
 
             <Button
                 android:id="@+id/btnChat"
@@ -35,7 +36,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/tvPatientRecordLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/patient_record_label"
@@ -43,7 +44,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/tvPatientSummaryLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/patient_summary_label"
@@ -56,28 +57,32 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/tvPatientNameLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Name" />
+                android:labelFor="@id/tvPatientName"
+                android:text="Name"
+                android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/tvPatientName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="first_last" />
+                android:text="@string/patient_name" />
 
             <TextView
-                android:id="@+id/textView6"
+                android:id="@+id/tvPatientIDLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Patient ID" />
+                android:labelFor="@id/tvPatientID"
+                android:text="Patient ID"
+                android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/textView7"
+                android:id="@+id/tvPatientID"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -90,28 +95,30 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/textView8"
+                android:id="@+id/tvPatientHeightLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Height" />
+                android:text="Height"
+                android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/textView9"
+                android:id="@+id/tvPatientHeight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="height" />
 
             <TextView
-                android:id="@+id/textView10"
+                android:id="@+id/tvPatientWeightLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Weight" />
+                android:text="Weight"
+                android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/textView11"
+                android:id="@+id/tvPatientWeight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -119,7 +126,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textView12"
+            android:id="@+id/tvPatientAllergiesLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Allergies"
@@ -127,13 +134,13 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/textView13"
+            android:id="@+id/tvPatientAllergies"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="allergies section" />
 
         <TextView
-            android:id="@+id/textView14"
+            android:id="@+id/tvPatientMedicationLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Medication"
@@ -141,13 +148,13 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/textView15"
+            android:id="@+id/tvPatientMedication"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="medication section" />
 
         <TextView
-            android:id="@+id/textView16"
+            android:id="@+id/tvPatientMedicalConditionsLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Medical Conditions"
@@ -155,7 +162,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/textView17"
+            android:id="@+id/tvPatientMedicalConditions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="medical conditions" />
