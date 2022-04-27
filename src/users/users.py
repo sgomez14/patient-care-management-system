@@ -87,12 +87,58 @@ class MeasurementsDB:
 
             msg = f"Querying Measurements Database: Found most recent \"{measurement_type}\" measurement for" \
                   f" user_id \"{user_id}\"."
+            logging.info(msg)
 
             return [True, msg, ApiResult.SUCCESS.value, measurement_data]
 
         except pymongo.errors.PyMongoError as err:
-            logging.error(f"Debugging Users Database: mongo exception -> {err}")
-            msg = f"Querying Users Database: Checking for user_id \"{user_id}\" failed."
+            logging.error(f"Debugging Measurements Database: mongo exception -> {err}")
+            msg = f"Querying Measurements Database: Checking measurement \"{measurement_type}\" for" \
+                  f" user_id \"{user_id}\" failed."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
+
+    @staticmethod
+    def get_all_recent_measurements(user_id: int):
+
+        # first check if argument is an int
+        if not isinstance(user_id, int):
+            msg = f"Querying Measurements Database: user_id \"{user_id}\" is not type int."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
+
+        # check if user exists
+        find_user_results = UsersDB.find_user(user_id)
+        if not find_user_results[0]:  # could not find user
+            return find_user_results
+
+        supported_measurements = ["temperature", "blood_pressure", "pulse", "oximeter",
+                                  "weight", "glucometer"]
+
+        measurements = {
+            "temperature": "Measurement not in record.",
+            "blood_pressure": "Measurement not in record.",
+            "pulse": "Measurement not in record.",
+            "oximeter": "Measurement not in record.",
+            "weight": "Measurement not in record.",
+            "glucometer": "Measurement not in record."
+        }
+
+        try:
+
+            for measure_type in supported_measurements:
+                measurement_results = get_most_recent_measurement(user_id=user_id, measurement_type=measure_type)
+
+                if measurement_results[0]:
+                    measurements[measure_type] = measurement_results[-1]  # data is in the last index of the results array
+
+            msg = f"Querying Measurements Database: Getting all recent measurement for user_id \"{user_id}\" succeeded."
+            logging.info(msg)
+
+            return [True, msg, ApiResult.SUCCESS.value, measurements]
+
+        except (RuntimeError, KeyError):
+            msg = f"Querying Measurements Database: Getting all recent measurement for user_id \"{user_id}\" failed."
             logging.error(msg)
             return [False, msg, ApiResult.CONFLICT.value]
 
@@ -409,3 +455,7 @@ def get_user_fullname(user_id: int, concatenated: bool):
 
 def get_most_recent_measurement(user_id: int, measurement_type: str):
     return MeasurementsDB.get_most_recent_measurement(user_id, measurement_type)
+
+
+def get_all_recent_measurements(user_id: int):
+    return MeasurementsDB.get_all_recent_measurements(user_id)
