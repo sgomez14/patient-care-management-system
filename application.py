@@ -329,4 +329,4 @@ api.add_resource(GetUserFullnameConcatenated, "/users/get-user-fullname-concaten
 api.add_resource(GetUserFullname, "/users/get-user-fullname/<int:user_id>")
 
 if __name__ == "__main__":
-    application.run(host="0.0.0.0",debug=True, use_debugger=True)
+    application.run(host="0.0.0.0", debug=True, use_debugger=True)  # host="0.0.0.0",

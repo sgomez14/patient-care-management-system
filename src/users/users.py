@@ -1,9 +1,11 @@
 import json
 import logging
 import pymongo
+from datetime import datetime
 from pymongo import MongoClient
 
 from ..utils.general_utils import ApiResult, load_json_string, DatabaseInfo as dbInfo, validate_json
+
 # from users_utils.users_utils import login_schema
 
 login_schema = {
@@ -37,6 +39,62 @@ class UserRoles:
     DOCTOR: int = 1
     NURSE: int = 2
     ADMIN: int = 3
+
+
+class MeasurementsDB:
+    cluster = MongoClient(f"mongodb+srv://{dbInfo.mongodb_user}:{dbInfo.mongodb_pwd}@pcms-database.xcbkd.mongodb.net/"
+                          f"{dbInfo.mongodb_cluster}?retryWrites=true&w=majority")
+    db = cluster["pcmsDB"]
+    collection = db["measurements"]
+
+    @staticmethod
+    def get_most_recent_measurement(user_id: int, measurement_type: str):
+        """This function finds most recent measurement of a given type for user_id."""
+
+        # first check if argument is an int
+        if not isinstance(user_id, int):
+            msg = f"Querying Measurements Database: user_id \"{user_id}\" is not type int."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
+
+        # check if user exists
+        find_user_results = UsersDB.find_user(user_id)
+        if not find_user_results[0]:  # could not find user
+            return find_user_results
+
+        # define search filter
+        find_filter = {"$and": [{"user_id": user_id}, {"type": measurement_type}]}
+        # find_filter = {"user_id": user_id}
+        try:
+            # query database
+
+            # check if patients has any records for that measurement type
+            number_matching_records = MeasurementsDB.collection.count_documents(find_filter)
+            if number_matching_records == 0:
+                msg = f"Querying Measurements Database: no \"{measurement_type}\" measurement for" \
+                          f" user_id \"{user_id}\"."
+                logging.info(msg)
+                return [False, msg, ApiResult.NOT_FOUND.value]
+
+            # find applies the filter, limit(1) means to limit results to 1 record, sort in descending order
+            measurement_result = MeasurementsDB.collection.find(filter=find_filter).sort("timestamp", pymongo.DESCENDING).limit(1)
+
+            most_recent_measurement = measurement_result[0]
+
+            value = most_recent_measurement["value"]
+            timestamp = most_recent_measurement["timestamp"]
+            measurement_data = f"{value} Date: {timestamp}"
+
+            msg = f"Querying Measurements Database: Found most recent \"{measurement_type}\" measurement for" \
+                  f" user_id \"{user_id}\"."
+
+            return [True, msg, ApiResult.SUCCESS.value, measurement_data]
+
+        except pymongo.errors.PyMongoError as err:
+            logging.error(f"Debugging Users Database: mongo exception -> {err}")
+            msg = f"Querying Users Database: Checking for user_id \"{user_id}\" failed."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
 
 
 class AssignmentsDB:
@@ -101,7 +159,7 @@ class AssignmentsDB:
 
                         # check if finding the user was successful
                         if full_name_results[0]:
-                            full_name = full_name_results[-1] # data is returned in the last index
+                            full_name = full_name_results[-1]  # data is returned in the last index
                             data["user_id"] = doctor_id
                             data["name"] = full_name
 
@@ -201,7 +259,7 @@ class UsersDB:
         # check if finding the user was successful
         if find_user_results[0]:
             first_name = find_user_results[-1]["first_name"]  # data is returned in the last index
-            last_name = find_user_results[-1]["last_name"]    # data is returned in the last index
+            last_name = find_user_results[-1]["last_name"]  # data is returned in the last index
 
             if concatenated:
                 # concatenate first and last name
@@ -235,7 +293,7 @@ class UsersDB:
         if find_user_results[0]:
             patient_record = find_user_results[-1]  # data is returned in the last index
             first_name = patient_record["first_name"]
-            last_name = patient_record["last_name"]    # data is returned in the last index
+            last_name = patient_record["last_name"]  # data is returned in the last index
 
             # concatenate first and last name
             full_name = f"{first_name} {last_name}"
@@ -295,7 +353,6 @@ class UsersDB:
 
 
 def authenticate_login(login_json: str):
-
     # first check if argument is a string
     if not isinstance(login_json, str):
         msg = f"Querying Users Database: login parameter is not type string."
@@ -339,21 +396,16 @@ def authenticate_login(login_json: str):
 
 
 def get_user_assignments(user_id: int):
-
     return AssignmentsDB.getAssignments(user_id)
 
 
 def get_patient_summary(user_id: int):
-
     return UsersDB.get_patient_summary(user_id)
 
 
 def get_user_fullname(user_id: int, concatenated: bool):
-
     return UsersDB.get_user_fullname(user_id, concatenated)
 
 
-
-
-
-
+def get_most_recent_measurement(user_id: int, measurement_type: str):
+    return MeasurementsDB.get_most_recent_measurement(user_id, measurement_type)
