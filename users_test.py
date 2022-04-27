@@ -1,5 +1,6 @@
 import json
-from src.users.users import UsersDB, authenticate_login, get_user_assignments, get_patient_summary
+from src.users.users import UsersDB, authenticate_login, get_user_assignments, get_patient_summary,\
+    get_most_recent_measurement, get_all_recent_measurements
 
 
 def test_find_user_in_db() -> None:
@@ -137,6 +138,53 @@ def test_get_patient_summary_with_invalid_user_id() -> None:
 
     for test_case in test_cases:
         result = get_patient_summary(test_case)
+
+        test_result.append(result)
+
+    assert test_result == expected_result
+
+
+def test_get_most_recent_measurement() -> None:
+    """Test getting the most recent measurement of a given type for a user.
+    The test includes accessing measurements the patient has and does not have."""
+
+    test_user_id = 321
+    test_cases = ["temperature", "BP"]
+
+    expected_result = [
+        [True, 'Querying Measurements Database: Found most recent "temperature" measurement for user_id "321".', 200,
+         '100.1 F Date: 2022-04-27 00:35:28'],
+        [False, 'Querying Measurements Database: no "BP" measurement for user_id "321".', 404]
+    ]
+
+    test_result = []
+    for test_case in test_cases:
+        result = get_most_recent_measurement(test_user_id, test_case)
+
+        test_result.append(result)
+
+    assert test_result == expected_result
+
+
+def test_get_all_recent_measurement() -> None:
+    """Test getting all recent measurements for a user."""
+
+    test_cases = [321]
+
+    expected_result = [
+        [True, 'Querying Measurements Database: Getting all recent measurement for user_id "321" succeeded.', 200,
+         {'temperature': '100.1 F Date: 2022-04-27 00:35:28',
+          'blood_pressure': '115/70 mmHg Date: 2022-04-27 00:45:28',
+          'pulse': 'Measurement not in record.',
+          'oximeter': 'Measurement not in record.',
+          'weight': 'Measurement not in record.',
+          'glucometer': 'Measurement not in record.'}
+         ]
+    ]
+
+    test_result = []
+    for test_case in test_cases:
+        result = get_all_recent_measurements(test_case)
 
         test_result.append(result)
 
