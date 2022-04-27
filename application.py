@@ -2,7 +2,8 @@ from flask import Flask, Response
 from flask_restful import Api, Resource, abort
 from src.device import device
 from src.chat import chat, chat_utils
-from src.users.users import authenticate_login, get_user_assignments, get_patient_summary, get_user_fullname
+from src.users.users import authenticate_login, get_user_assignments, get_patient_summary, get_user_fullname,\
+    get_all_recent_measurements
 
 application = Flask(__name__)
 # app = application
@@ -304,6 +305,19 @@ class GetUserFullname(Resource):
                     "name": name_result[-1]}
 
 
+class GetAllRecentMeasurements(Resource):
+    def get(self, user_id):
+        measurements_result = get_all_recent_measurements(user_id)
+
+        if api_call_successful(operation_success=measurements_result[0],
+                               msg=measurements_result[1],
+                               error_code=measurements_result[2]):
+            return {"result": measurements_result[0],
+                    "message": measurements_result[1],
+                    "http_code": measurements_result[2],
+                    "name": measurements_result[-1]}
+
+
 # All API endpoints
 api.add_resource(HomePage, "/")
 
@@ -327,6 +341,7 @@ api.add_resource(GetUserAssignments, "/users/get-assignments/<int:user_id>")
 api.add_resource(GetPatientSummary, "/users/get-patient-summary/<int:user_id>")
 api.add_resource(GetUserFullnameConcatenated, "/users/get-user-fullname-concatenated/<int:user_id>")
 api.add_resource(GetUserFullname, "/users/get-user-fullname/<int:user_id>")
+api.add_resource(GetAllRecentMeasurements, "/users/get-all-recent-measurements/<int:user_id>")
 
 if __name__ == "__main__":
     application.run(host="0.0.0.0", debug=True, use_debugger=True)  # host="0.0.0.0",

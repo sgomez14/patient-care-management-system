@@ -137,6 +137,7 @@ class MeasurementsDB:
 
             return [True, msg, ApiResult.SUCCESS.value, measurements]
 
+
         except (RuntimeError, KeyError):
             msg = f"Querying Measurements Database: Getting all recent measurement for user_id \"{user_id}\" failed."
             logging.error(msg)
