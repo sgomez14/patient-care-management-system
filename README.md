@@ -71,7 +71,7 @@ Successful Response
 
 
 </br></br>
-### GET /users/get-patient-summary/{user_id}
+### `GET` /users/get-patient-summary/{user_id}
 - The assignments are in an array.
 
 Successful Response
