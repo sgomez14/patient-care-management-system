@@ -72,7 +72,6 @@ Successful Response
 
 </br></br>
 ### `GET` /users/get-patient-summary/{user_id}
-- The assignments are in an array.
 
 Successful Response
 
@@ -82,10 +81,8 @@ Successful Response
 
 </br></br>
 ### `GET` /users/get-all-recent-measurements/{user_id}
-- The assignments are in an array.
 
 Successful Response
 
 
-![Image of Successful Get Patient Recent Measurements Response JSON](https://user-images.githubusercontent.com/30096097/167274499-ecb1d833-dd10-4a3b-81e2-02927ed252fd.png)
-
+![Image of Successful Get Patient Recent Measurements Response JSON](https://user-images.githubusercontent.com/30096097/167274537-5f2ef0cf-e177-4dc3-903e-2bf1bc846059.png)
