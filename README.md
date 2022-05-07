@@ -58,3 +58,13 @@ Successful Response
 
 
 ![Image of Successful Get User Fullname Concatenated Response JSON](https://user-images.githubusercontent.com/30096097/167272330-d99582a7-6153-42dc-8a81-2b9d15ed0ed5.png)
+
+
+</br></br>
+### GET /users/get-assignments/{user_id}
+- The assignments are in an array.
+
+Successful Response
+
+
+![get_assignments](https://user-images.githubusercontent.com/30096097/167273306-30b574fc-65df-4ab4-9203-9ee1305b559b.png)
