@@ -6,5 +6,12 @@
     <string name="record_btn">Record</string>
     <string name="chat_btn">Chat</string>
     <string name="patient_name">Patient Name</string>
+    <string name="recent_measurements">Recent Measurements</string>
+    <string name="temperature">Temp:\u0020</string>
+    <string name="blood_pressure">BP:\u0020</string>
+    <string name="pulse">Pulse:\u0020</string>
+    <string name="oximeter">Oximeter:\u0020</string>
+    <string name="weight">Weight:\u0020</string>
+    <string name="glucometer">Glucose:\u0020</string>
 
 </resources>
