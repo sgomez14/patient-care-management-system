@@ -1,9 +1,11 @@
 import json
 import logging
 import pymongo
+from datetime import datetime
 from pymongo import MongoClient
 
 from ..utils.general_utils import ApiResult, load_json_string, DatabaseInfo as dbInfo, validate_json
+
 # from users_utils.users_utils import login_schema
 
 login_schema = {
@@ -39,6 +41,109 @@ class UserRoles:
     ADMIN: int = 3
 
 
+class MeasurementsDB:
+    cluster = MongoClient(f"mongodb+srv://{dbInfo.mongodb_user}:{dbInfo.mongodb_pwd}@pcms-database.xcbkd.mongodb.net/"
+                          f"{dbInfo.mongodb_cluster}?retryWrites=true&w=majority")
+    db = cluster["pcmsDB"]
+    collection = db["measurements"]
+
+    @staticmethod
+    def get_most_recent_measurement(user_id: int, measurement_type: str):
+        """This function finds most recent measurement of a given type for user_id."""
+
+        # first check if argument is an int
+        if not isinstance(user_id, int):
+            msg = f"Querying Measurements Database: user_id \"{user_id}\" is not type int."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
+
+        # check if user exists
+        find_user_results = UsersDB.find_user(user_id)
+        if not find_user_results[0]:  # could not find user
+            return find_user_results
+
+        # define search filter
+        find_filter = {"$and": [{"user_id": user_id}, {"type": measurement_type}]}
+        # find_filter = {"user_id": user_id}
+        try:
+            # query database
+
+            # check if patients has any records for that measurement type
+            number_matching_records = MeasurementsDB.collection.count_documents(find_filter)
+            if number_matching_records == 0:
+                msg = f"Querying Measurements Database: no \"{measurement_type}\" measurement for" \
+                          f" user_id \"{user_id}\"."
+                logging.info(msg)
+                return [False, msg, ApiResult.NOT_FOUND.value]
+
+            # find applies the filter, limit(1) means to limit results to 1 record, sort in descending order
+            measurement_result = MeasurementsDB.collection.find(filter=find_filter).sort("timestamp", pymongo.DESCENDING).limit(1)
+
+            most_recent_measurement = measurement_result[0]
+
+            value = most_recent_measurement["value"]
+            timestamp = most_recent_measurement["timestamp"]
+            measurement_data = f"{value} Date: {timestamp}"
+
+            msg = f"Querying Measurements Database: Found most recent \"{measurement_type}\" measurement for" \
+                  f" user_id \"{user_id}\"."
+            logging.info(msg)
+
+            return [True, msg, ApiResult.SUCCESS.value, measurement_data]
+
+        except pymongo.errors.PyMongoError as err:
+            logging.error(f"Debugging Measurements Database: mongo exception -> {err}")
+            msg = f"Querying Measurements Database: Checking measurement \"{measurement_type}\" for" \
+                  f" user_id \"{user_id}\" failed."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
+
+    @staticmethod
+    def get_all_recent_measurements(user_id: int):
+
+        # first check if argument is an int
+        if not isinstance(user_id, int):
+            msg = f"Querying Measurements Database: user_id \"{user_id}\" is not type int."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
+
+        # check if user exists
+        find_user_results = UsersDB.find_user(user_id)
+        if not find_user_results[0]:  # could not find user
+            return find_user_results
+
+        supported_measurements = ["temperature", "blood_pressure", "pulse", "oximeter",
+                                  "weight", "glucometer"]
+
+        measurements = {
+            "temperature": "Measurement not in record.",
+            "blood_pressure": "Measurement not in record.",
+            "pulse": "Measurement not in record.",
+            "oximeter": "Measurement not in record.",
+            "weight": "Measurement not in record.",
+            "glucometer": "Measurement not in record."
+        }
+
+        try:
+
+            for measure_type in supported_measurements:
+                measurement_results = get_most_recent_measurement(user_id=user_id, measurement_type=measure_type)
+
+                if measurement_results[0]:
+                    measurements[measure_type] = measurement_results[-1]  # data is in the last index of the results array
+
+            msg = f"Querying Measurements Database: Getting all recent measurement for user_id \"{user_id}\" succeeded."
+            logging.info(msg)
+
+            return [True, msg, ApiResult.SUCCESS.value, measurements]
+
+
+        except (RuntimeError, KeyError):
+            msg = f"Querying Measurements Database: Getting all recent measurement for user_id \"{user_id}\" failed."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
+
+
 class AssignmentsDB:
     cluster = MongoClient(f"mongodb+srv://{dbInfo.mongodb_user}:{dbInfo.mongodb_pwd}@pcms-database.xcbkd.mongodb.net/"
                           f"{dbInfo.mongodb_cluster}?retryWrites=true&w=majority")
@@ -57,6 +162,11 @@ class AssignmentsDB:
             msg = f"Querying Assignments Database: user_id \"{user_id}\" is not type int."
             logging.error(msg)
             return [False, msg, ApiResult.CONFLICT.value]
+
+        # check if user exists
+        find_user_results = UsersDB.find_user(user_id)
+        if not find_user_results[0]:  # could not find user
+            return find_user_results
 
         # define search filter
         find_filter = {"$or": [{"doctor.user_id": user_id}, {"patient.user_id": user_id}]}
@@ -96,7 +206,7 @@ class AssignmentsDB:
 
                         # check if finding the user was successful
                         if full_name_results[0]:
-                            full_name = full_name_results[-1] # data is returned in the last index
+                            full_name = full_name_results[-1]  # data is returned in the last index
                             data["user_id"] = doctor_id
                             data["name"] = full_name
 
@@ -181,7 +291,7 @@ class UsersDB:
             return [False, msg, ApiResult.CONFLICT.value]
 
     @staticmethod
-    def get_user_fullname(user_id: int):
+    def get_user_fullname(user_id: int, concatenated: bool = True):
         """This function gets full name associated with user_id"""
 
         # first check if argument is an int
@@ -196,10 +306,13 @@ class UsersDB:
         # check if finding the user was successful
         if find_user_results[0]:
             first_name = find_user_results[-1]["first_name"]  # data is returned in the last index
-            last_name = find_user_results[-1]["last_name"]    # data is returned in the last index
+            last_name = find_user_results[-1]["last_name"]  # data is returned in the last index
 
-            # concatenate first and last name
-            full_name = f"{first_name} {last_name}"
+            if concatenated:
+                # concatenate first and last name
+                full_name = f"{first_name} {last_name}"
+            else:
+                full_name = {"first_name": first_name, "last_name": last_name}
 
             # log result
             msg = f"Querying User Database: Full name for user_id \"{user_id}\" is {full_name}"
@@ -210,9 +323,83 @@ class UsersDB:
         else:  # the find user query failed
             return find_user_results
 
+    @staticmethod
+    def get_patient_summary(user_id: int):
+        """This function gets patient summary associated with user_id"""
+
+        # first check if argument is an int
+        if not isinstance(user_id, int):
+            msg = f"Querying Users Database: user_id \"{user_id}\" is not type int."
+            logging.error(msg)
+            return [False, msg, ApiResult.CONFLICT.value]
+
+        # query user database to get first and last names
+        find_user_results = UsersDB.find_user(user_id)
+
+        # check if finding the user was successful
+        if find_user_results[0]:
+            patient_record = find_user_results[-1]  # data is returned in the last index
+            first_name = patient_record["first_name"]
+            last_name = patient_record["last_name"]  # data is returned in the last index
+
+            # concatenate first and last name
+            full_name = f"{first_name} {last_name}"
+
+            # log result
+            msg = f"Querying User Database: Full name for user_id \"{user_id}\" is {full_name}"
+            logging.info(msg)
+
+            # checking is key exists --> https://www.stackvidhya.com/check-if-key-exists-in-dictionary-python/
+            # check if this user has a summary entry in their record
+            if "summary" not in patient_record:
+                msg = f"Querying Users Database: user_id \"{user_id}\" does not have a summary entry in their record."
+                logging.error(msg)
+                return [False, msg, ApiResult.NOT_FOUND.value]
+
+            # handling KeyError exception --> https://realpython.com/python-keyerror/
+            # this block extract data from various categories, if the key doesn't exist, then handle exception
+            try:
+                # extract the summary data from patient record
+                summary_data = patient_record["summary"]
+
+                # get the height data
+                height = summary_data["height"]  # this will return a string in format of --> # ft. # in.
+
+                # get the weight data
+                weight = summary_data["weight"]  # this will return a string in format of --> # lbs.
+
+                # get the allergies data
+                allergies = summary_data["allergies"]  # this will return a list of strings
+
+                # get the medications data
+                medication = summary_data["medication"]  # this will return a list of strings
+
+                # get the medical conditions
+                medical_conditions = summary_data["medical_conditions"]  # this will return a list of strings
+
+                # construct the dictionary to return to the API caller
+                summary = {
+                    "user_id": user_id,
+                    "name": full_name,
+                    "height": height,
+                    "weight": weight,
+                    "allergies": allergies,
+                    "medication": medication,
+                    "medical_conditions": medical_conditions
+                }
+
+                return [True, msg, ApiResult.SUCCESS.value, summary]
+
+            except KeyError:
+                msg = f"Querying Users Database: user_id \"{user_id}\" has a missing category in their summary."
+                logging.error(msg)
+                return [False, msg, ApiResult.NOT_FOUND.value]
+
+        else:  # the find user query failed
+            return find_user_results
+
 
 def authenticate_login(login_json: str):
-
     # first check if argument is a string
     if not isinstance(login_json, str):
         msg = f"Querying Users Database: login parameter is not type string."
@@ -255,11 +442,21 @@ def authenticate_login(login_json: str):
         return [False, msg, ApiResult.CONFLICT.value, "n/a"]
 
 
-def get_user_assignments(user_id):
-
+def get_user_assignments(user_id: int):
     return AssignmentsDB.getAssignments(user_id)
 
 
+def get_patient_summary(user_id: int):
+    return UsersDB.get_patient_summary(user_id)
 
 
+def get_user_fullname(user_id: int, concatenated: bool):
+    return UsersDB.get_user_fullname(user_id, concatenated)
 
+
+def get_most_recent_measurement(user_id: int, measurement_type: str):
+    return MeasurementsDB.get_most_recent_measurement(user_id, measurement_type)
+
+
+def get_all_recent_measurements(user_id: int):
+    return MeasurementsDB.get_all_recent_measurements(user_id)
