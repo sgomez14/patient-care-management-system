@@ -31,7 +31,7 @@ The User module provide applications access to user related information. Applica
 > - [Patient Recent Measurements]
 
 ## User API Endpoints
-### GET /users/authenticate-login/{login_json}
+### `GET` /users/authenticate-login/{login_json}
 - This is basic plaintext authentication. Production version will utilize proper encryption methods.
 - Login json has the following format: `{"user_id":20544,"password":"ec544"}`
 
@@ -43,7 +43,7 @@ Successful Response
 
 
 </br></br>
-### GET /users/get-user-fullname/{user_id}
+### `GET` /users/get-user-fullname/{user_id}
 
 Successful Response
 
@@ -52,7 +52,7 @@ Successful Response
 
 
 </br></br>
-### GET /users/get-user-fullname-concatenated/{user_id}
+### `GET` /users/get-user-fullname-concatenated/{user_id}
 
 Successful Response
 
@@ -61,7 +61,7 @@ Successful Response
 
 
 </br></br>
-### GET /users/get-assignments/{user_id}
+### `GET` /users/get-assignments/{user_id}
 - The assignments are in an array.
 
 Successful Response
@@ -78,3 +78,10 @@ Successful Response
 
 
 ![Image of Successful Get Patient Summary Response JSON](https://user-images.githubusercontent.com/30096097/167273584-57eeb5ec-9d7c-44f6-99d5-f0c945790be6.png)
+
+
+</br></br>
+### `GET` /users/get-all-recent-measurements/{user_id}
+- The assignments are in an array.
+
+Successful Response
