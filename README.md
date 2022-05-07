@@ -26,9 +26,9 @@ The User module provide applications access to user related information. Applica
 
 > - [Login Authentication](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersauthenticate-loginlogin_json)
 > - [User Full Name](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersget-user-fullnameuser_id)
-> - Doctor/Patient Assignments
-> - Patient Summary
-> - Patient Recent Measurements
+> - [Doctor/Patient Assignments](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersget-assignmentsuser_id)
+> - [Patient Summary]
+> - [Patient Recent Measurements]
 
 ## User API Endpoints
 ### GET /users/authenticate-login/{login_json}
@@ -67,4 +67,14 @@ Successful Response
 Successful Response
 
 
-![get_assignments](https://user-images.githubusercontent.com/30096097/167273306-30b574fc-65df-4ab4-9203-9ee1305b559b.png)
+![Image of Successful Get User Assignments Response JSON](https://user-images.githubusercontent.com/30096097/167273306-30b574fc-65df-4ab4-9203-9ee1305b559b.png)
+
+
+</br></br>
+### GET /users/get-patient-summary/{user_id}
+- The assignments are in an array.
+
+Successful Response
+
+
+![Image of Successful Get Patient Summary Response JSON](https://user-images.githubusercontent.com/30096097/167273584-57eeb5ec-9d7c-44f6-99d5-f0c945790be6.png)
