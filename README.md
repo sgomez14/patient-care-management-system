@@ -85,3 +85,7 @@ Successful Response
 - The assignments are in an array.
 
 Successful Response
+
+
+![Image of Successful Get Patient Recent Measurements Response JSON](https://user-images.githubusercontent.com/30096097/167274499-ecb1d833-dd10-4a3b-81e2-02927ed252fd.png)
+
