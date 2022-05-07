@@ -24,6 +24,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String API_BASE_URL = "http://10.0.2.2:5000/users/authenticate-login/";
 //    private static final String API_BASE_URL = "http://192.168.99.61:5000/users/authenticate-login/"; // Santiago home server
+//    private static final String API_BASE_URL = "http://10.192.3.123:5000/users/authenticate-login/"; //bu public
 
     private AppCompatButton btnGoogle, btnLogin;
     private EditText userName, password;

@@ -26,7 +26,11 @@ import java.util.ArrayList;
 public class PatientRecordActivity extends AppCompatActivity {
 
     private static final String API_SUMMARY_URL = "http://10.0.2.2:5000/users/get-patient-summary/";
+//    private static final String API_SUMMARY_URL = "http://192.168.99.61:5000/users/get-patient-summary/";
+    private static final String API_MEASUREMENTS_URL = "http://10.0.2.2:5000/users/get-all-recent-measurements/";
 //    private static final String API_BASE_URL = "http://192.168.99.61:5000/users/get-patient-summary/";
+//    private static final String API_BASE_URL = "http://168.122.223.67:5000/users/get-patient-summary/";
+
 
 //    private Button btnRecord;
     private Button btnChat;
@@ -47,6 +51,14 @@ public class PatientRecordActivity extends AppCompatActivity {
     private TextView tvPatientMedicalConditionsLabel;
 
 
+    private TextView tvTemp;
+    private TextView tvBloodPressure;
+    private TextView tvPulse;
+    private TextView tvOximeter;
+    private TextView tvWeight;
+    private TextView tvGlucometer;
+
+
     // variables to store patient summary information
     private String patientName;
     private String patientID;
@@ -55,6 +67,16 @@ public class PatientRecordActivity extends AppCompatActivity {
     private String patientAllergies;
     private String patientMedication;
     private String patientMedicalConditions;
+
+    // variables to store patient recent measurements
+    private String patientTemp;
+    private String patientBloodPressure;
+    private String patientPulse;
+    private String patientOximeter;
+    private String patientWeightRecent;
+    private String patientGlucometer;
+
+
 
     // variable to store bundle passed from Assignments Activity
     private Bundle chatActivityBundle;
@@ -71,6 +93,7 @@ public class PatientRecordActivity extends AppCompatActivity {
 
 
         // get reference to summary GUI elements
+        // summary elements
         tvPatientName                   = (TextView) findViewById(R.id.tvPatientName);
         tvPatientNameLabel              = (TextView) findViewById(R.id.tvPatientNameLabel);
         tvPatientID                     = (TextView) findViewById(R.id.tvPatientID);
@@ -85,6 +108,18 @@ public class PatientRecordActivity extends AppCompatActivity {
         tvPatientMedicationLabel        = (TextView) findViewById(R.id.tvPatientMedicationLabel);
         tvPatientMedicalConditions      = (TextView) findViewById(R.id.tvPatientMedicalConditions);
         tvPatientMedicalConditionsLabel = (TextView) findViewById(R.id.tvPatientMedicalConditionsLabel);
+        // recent measurements elements
+        tvTemp           = (TextView) findViewById(R.id.tvTemp);
+        tvBloodPressure  = (TextView) findViewById(R.id.tvBloodPressure);
+        tvPulse          = (TextView) findViewById(R.id.tvPulse);
+        tvOximeter       = (TextView) findViewById(R.id.tvOximeter);
+        tvWeight         = (TextView) findViewById(R.id.tvWeight);
+        tvGlucometer     = (TextView) findViewById(R.id.tvGlucometer);
+
+
+
+
+
 
 
         // get button GUI reference and setup onclicklistener
@@ -99,11 +134,15 @@ public class PatientRecordActivity extends AppCompatActivity {
         // make call to API to get the patient's summary
         getSummary(chatActivityBundle.getInt("patientID"));
 
+        // make call to API to get the patient's recent measurements
+        getRecentMeasurements(chatActivityBundle.getInt("patientID")); 
+
+
 
     } /* end of onCreate() */
 
 
-    // Function to get the user's assignments through Restful API
+    // Function to get a patient's summary through Restful API
     private void getSummary(int userID) {
 
         // Instantiate request queue using volley to call Restful API
@@ -155,6 +194,60 @@ public class PatientRecordActivity extends AppCompatActivity {
         );
         requestQueue.add(jsonObjectRequest);
     } /* end of getSummary() */
+
+
+    // Function to get a patient's recent measurements through Restful API
+    private void getRecentMeasurements(int userID) {
+
+        // Instantiate request queue using volley to call Restful API
+        RequestQueue requestQueue = Volley.newRequestQueue(PatientRecordActivity.this);
+
+        // Append username and password to url as parameters
+        String url = API_MEASUREMENTS_URL + userID;
+
+        // Create json object request for api
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+
+                // Response listener
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.i("PCMS onResponse", response.toString());
+                        try {
+
+                            // process the response
+                            parseMeasurementsJSON(response.getJSONObject("measurements"));
+                        }
+                        catch (Exception e) {
+                            Log.e("PCMS Exception", e.getMessage());
+                        }
+                    }
+                },
+
+                // Error listener
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("PCMS onErrorResponse", error.toString());
+                        try {
+//                            String body = new String(error.networkResponse.data, "UTF-8");
+                            NetworkResponse response = error.networkResponse;
+                            String errorMsg = "";
+                            if(response != null && response.data != null){
+                                String errorString = new String(response.data);
+                                Log.i("log error", errorString);
+                            }
+                        } catch (/*UnsupportedEncodingException*/ Exception e) {
+                            Log.e("PCMS Exception", e.getMessage());
+                        }
+                    }
+                }
+        );
+        requestQueue.add(jsonObjectRequest);
+    } /* end of getRecentMeasurements() */
 
 
     // this function parses the summary JSON within the response JSON
@@ -215,6 +308,50 @@ public class PatientRecordActivity extends AppCompatActivity {
         }
 
         return stringBuilder.toString();
+    }
+
+    // this function parses the Measurements JSON within the response JSON
+    private void parseMeasurementsJSON(JSONObject measurements) throws JSONException {
+
+        // expecting a JSON in this format:
+        /*
+            {
+                "temperature": "100.1 F Date: 2022-04-27 00:35:28",
+                "blood_pressure": "115/70 mmHg Date: 2022-04-27 00:45:28",
+                "pulse": "Measurement not in record.",
+                "oximeter": "Measurement not in record.",
+                "weight": "Measurement not in record.",
+                "glucometer": "Measurement not in record."
+            }
+       */
+        if (measurements != null){
+            patientTemp          = measurements.getString("temperature");
+            patientBloodPressure = measurements.getString("blood_pressure");
+            patientPulse         = measurements.getString("pulse");
+            patientOximeter      = measurements.getString("oximeter");
+            patientWeightRecent  = measurements.getString("weight");
+            patientGlucometer    = measurements.getString("glucometer");
+
+            String temp =  getResources().getString(R.string.temperature) + patientTemp;
+            String bp =  getResources().getString(R.string.blood_pressure) + patientBloodPressure;
+            String pulse =  getResources().getString(R.string.pulse) + patientPulse;
+            String oximeter =  getResources().getString(R.string.oximeter) + patientOximeter;
+            String weightRecent =  getResources().getString(R.string.weight) + patientWeightRecent;
+            String glucometer =  getResources().getString(R.string.glucometer) + patientGlucometer;
+
+            // set the UI
+            tvTemp.setText(temp);
+            tvBloodPressure.setText(bp);
+            tvPulse.setText(pulse);
+            tvOximeter.setText(oximeter);
+            tvWeight.setText(weightRecent);
+            tvGlucometer.setText(glucometer);
+
+
+        }
+        else {
+            Log.e("PCMS Exception", "JSON object passed to parseSummaryJSON is null.");
+        }
     }
 
     private void goToChatActivity(Bundle chatActivityBundle) {
