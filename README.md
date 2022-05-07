@@ -25,7 +25,7 @@ Documentation for the User module resides on here on the main README.
 The User module provide applications access to user related information. Applications can request the following data:
 
 > - [Login Authentication](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersauthenticate-loginlogin_json)
-> - [User Full Name](https://github.com/sgomez14/patient-care-management-system/edit/main/README.md#get-usersget-user-fullnameuser_id)
+> - [User Full Name](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersget-user-fullnameuser_id)
 > - Doctor/Patient Assignments
 > - Patient Summary
 > - Patient Recent Measurements
