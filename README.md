@@ -24,8 +24,8 @@ Documentation for the User module resides on here on the main README.
 
 The User module provide applications access to user related information. Applications can request the following data:
 
-> - Login Authentication
-> - User Full Name
+> - [Login Authentication](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersauthenticate-loginlogin_json)
+> - [User Full Name](https://github.com/sgomez14/patient-care-management-system/edit/main/README.md#get-usersget-user-fullnameuser_id)
 > - Doctor/Patient Assignments
 > - Patient Summary
 > - Patient Recent Measurements
@@ -33,7 +33,7 @@ The User module provide applications access to user related information. Applica
 ## User API Endpoints
 ### GET /users/authenticate-login/{login_json}
 - This is basic plaintext authentication. Production version will utilize proper encryption methods.
-- Login json has the following format: {"user_id":20544,"password":"ec544"}
+- Login json has the following format: `{"user_id":20544,"password":"ec544"}`
 
 
 Successful Response
@@ -41,3 +41,20 @@ Successful Response
 
 ![Image of Login Successful Response JSON](https://user-images.githubusercontent.com/30096097/167271854-6b2bfbc6-79bf-4d60-9c75-82b30f2d1e8a.png)
 
+
+</br></br>
+### GET /users/get-user-fullname/{user_id}
+
+Successful Response
+
+
+![Image of Successful Get User Fullname Response JSON](https://user-images.githubusercontent.com/30096097/167272530-57ea44a8-2ad4-4951-9cde-c1c9a59d3d59.png)
+
+
+</br></br>
+### GET /users/get-user-fullname-concatenated/{user_id}
+
+Successful Response
+
+
+![Image of Successful Get User Fullname Concatenated Response JSON](https://user-images.githubusercontent.com/30096097/167272330-d99582a7-6153-42dc-8a81-2b9d15ed0ed5.png)
