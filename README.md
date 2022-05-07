@@ -1,8 +1,8 @@
 # patient-care-management-system
 Patient Care Management System Developed for BU EC 530 Software Engineering
 
-# Documentation
-Documentation is maintained in this repository's [wiki section](https://github.com/sgomez14/patient-care-management-system/wiki).
+# Documentation for Device and Chat Modules
+Documentation for the Device and Chat modules is maintained in this repository's [wiki section](https://github.com/sgomez14/patient-care-management-system/wiki).
 
 > [Branching Strategy](https://github.com/sgomez14/patient-care-management-system/wiki/Branching-Strategy) 
 >
@@ -17,3 +17,7 @@ Documentation is maintained in this repository's [wiki section](https://github.c
 
 # Progress Report
 Full progress report is located in the [wiki](https://github.com/sgomez14/patient-care-management-system/wiki).
+
+
+# Documentation for User Module
+Documentation for the User module resides on here on the main README.
