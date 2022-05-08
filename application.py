@@ -6,7 +6,6 @@ from src.users.users import authenticate_login, get_user_assignments, get_patien
     get_all_recent_measurements
 
 application = Flask(__name__)
-# app = application
 api = Api(application, catch_all_404s=True)
 
 data_directory: str = "data/"
@@ -315,7 +314,7 @@ class GetAllRecentMeasurements(Resource):
             return {"result": measurements_result[0],
                     "message": measurements_result[1],
                     "http_code": measurements_result[2],
-                    "name": measurements_result[-1]}
+                    "measurements": measurements_result[-1]}
 
 
 # All API endpoints
@@ -344,4 +343,5 @@ api.add_resource(GetUserFullname, "/users/get-user-fullname/<int:user_id>")
 api.add_resource(GetAllRecentMeasurements, "/users/get-all-recent-measurements/<int:user_id>")
 
 if __name__ == "__main__":
-    application.run(host="0.0.0.0", debug=True, use_debugger=True)  # host="0.0.0.0",
+    # to connect mobile app to server, add host="0.0.0.0" as parameter to application.run()
+    application.run(debug=True, use_debugger=True)
