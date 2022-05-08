@@ -77,7 +77,8 @@ class MeasurementsDB:
                 return [False, msg, ApiResult.NOT_FOUND.value]
 
             # find applies the filter, limit(1) means to limit results to 1 record, sort in descending order
-            measurement_result = MeasurementsDB.collection.find(filter=find_filter).sort("timestamp", pymongo.DESCENDING).limit(1)
+            measurement_result = MeasurementsDB.collection.find(filter=find_filter).sort("timestamp",
+                                                                                         pymongo.DESCENDING).limit(1)
 
             most_recent_measurement = measurement_result[0]
 
@@ -130,13 +131,13 @@ class MeasurementsDB:
                 measurement_results = get_most_recent_measurement(user_id=user_id, measurement_type=measure_type)
 
                 if measurement_results[0]:
-                    measurements[measure_type] = measurement_results[-1]  # data is in the last index of the results array
+                    # data is in the last index of the results array
+                    measurements[measure_type] = measurement_results[-1]
 
             msg = f"Querying Measurements Database: Getting all recent measurement for user_id \"{user_id}\" succeeded."
             logging.info(msg)
 
             return [True, msg, ApiResult.SUCCESS.value, measurements]
-
 
         except (RuntimeError, KeyError):
             msg = f"Querying Measurements Database: Getting all recent measurement for user_id \"{user_id}\" failed."
