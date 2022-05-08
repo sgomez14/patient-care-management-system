@@ -47,6 +47,10 @@ public class LoginActivity extends AppCompatActivity {
         userName = findViewById(R.id.userName);
         password = findViewById(R.id.password);
 
+
+        // Hide the Google button
+        btnGoogle.setVisibility(View.GONE);
+
         // Call animation function for log-in preview UI
         animation();
 
