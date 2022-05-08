@@ -27,8 +27,8 @@ The User module provide applications access to user related information. Applica
 > - [Login Authentication](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersauthenticate-loginlogin_json)
 > - [User Full Name](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersget-user-fullnameuser_id)
 > - [Doctor/Patient Assignments](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersget-assignmentsuser_id)
-> - [Patient Summary]
-> - [Patient Recent Measurements]
+> - [Patient Summary](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersget-patient-summaryuser_id)
+> - [Patient Recent Measurements](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersget-all-recent-measurementsuser_id)
 
 ## User API Endpoints
 ### `GET` /users/authenticate-login/{login_json}
