@@ -27,9 +27,15 @@ import java.util.ArrayList;
 
 public class AssignmentsActivity extends AppCompatActivity {
 
+    /*
+    10.0.2.2 is the ip address of emulator. If you are testing on android studio emulator, use the line below.
+    Otherwise, change 10.0.2.2 to your own ip address if testing on actual device.
+    An example is provided below for BU public.
+
+    BU Public:
+    private static final String API_BASE_URL = "http://10.192.3.123:5000/users/authenticate-login/";
+    */
     private static final String API_BASE_URL = "http://10.0.2.2:5000/users/get-assignments/";
-//    private static final String API_BASE_URL = "http://192.168.99.61:5000/users/get-assignments/"; // Santiago home server
-//    private static final String API_BASE_URL = "http://10.192.3.123:5000/users/get-assignments/";
 
     private static final String DOCTOR = "doctor";
     private static final String PATIENT = "patient";
@@ -219,6 +225,7 @@ public class AssignmentsActivity extends AppCompatActivity {
         String[] fullNameSplit = rowName.split(" ");
         patientRecordBundle.putString("receiverFirstName", fullNameSplit[0]);
         patientRecordBundle.putString("receiverLastName", fullNameSplit[1]);
+        patientRecordBundle.putString("role", userRole);
 
         if (userRole.equals(DOCTOR)){
             // the user is a doctor and they tapped on patient, so pass along name and ID in the row data to bundle

@@ -28,6 +28,9 @@ Please refer to for more information: https://www.youtube.com/watch?v=EnyJsp5bMz
 
 public class ChatActivity extends AppCompatActivity {
 
+    private static final String DOCTOR = "doctor";
+    private static final String PATIENT = "patient";
+
     /*
     viewBinding was enabled in build.gradle app so the
     ActivityChatBinding class is automatically generated from our layout file activity_chat
@@ -36,6 +39,10 @@ public class ChatActivity extends AppCompatActivity {
     private List<ChatMessage> chatMessages;
     private ChatAdapter chatAdapter;
     private FirebaseFirestore database;
+
+    // role info
+    private String userRole;
+    private Bitmap profile;
 
     // Sender info
     private int senderUserID;
@@ -52,15 +59,18 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         // get bundle passed from login activity
-        Bundle loginBundle = getIntent().getExtras();
+        Bundle chatBundle = getIntent().getExtras();
+
+        // extract role
+        userRole = chatBundle.getString("role");
 
         // extract sender info from bundle
-        senderUserID = loginBundle.getInt("senderUserID");
+        senderUserID = chatBundle.getInt("senderUserID");
 
         // extract receiver info from bundle
-        receiverUserID = loginBundle.getInt("receiverUserID");
-        receiverFirstName = loginBundle.getString("receiverFirstName");
-        receiverLastName = loginBundle.getString("receiverLastName");
+        receiverUserID = chatBundle.getInt("receiverUserID");
+        receiverFirstName = chatBundle.getString("receiverFirstName");
+        receiverLastName = chatBundle.getString("receiverLastName");
 
         setListeners();
         loadReceiverDetails();
@@ -74,8 +84,15 @@ public class ChatActivity extends AppCompatActivity {
     private void init() {
         chatMessages = new ArrayList<>();
 
-        // convert hard coded profile pic to base 64 encoded string
-        Bitmap profile = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.profile);
+        // If current user role is doctor, render the talking target to patient profile
+        if (userRole.equals(DOCTOR)) {
+            profile = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.patient);
+        }
+        // If current user role is patient, render the talking target to doctors profile
+        else if (userRole.equals(PATIENT)){
+            profile = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.doctor);
+        }
+        // Convert profile into bitmap and base64
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         profile.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
         byte[] bytes = byteArrayOutputStream.toByteArray();

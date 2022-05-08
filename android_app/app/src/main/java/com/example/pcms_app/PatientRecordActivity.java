@@ -21,16 +21,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 public class PatientRecordActivity extends AppCompatActivity {
 
-    private static final String API_SUMMARY_URL = "http://10.0.2.2:5000/users/get-patient-summary/";
-//    private static final String API_SUMMARY_URL = "http://192.168.99.61:5000/users/get-patient-summary/";
-    private static final String API_MEASUREMENTS_URL = "http://10.0.2.2:5000/users/get-all-recent-measurements/";
-//    private static final String API_BASE_URL = "http://192.168.99.61:5000/users/get-patient-summary/";
-//    private static final String API_BASE_URL = "http://168.122.223.67:5000/users/get-patient-summary/";
+    /*
+    10.0.2.2 is the ip address of emulator. If you are testing on android studio emulator, use the line below.
+    Otherwise, change 10.0.2.2 to your own ip address if testing on actual device.
+    An example is provided below for BU public.
 
+    BU Public:
+    private static final String API_BASE_URL = "http://10.192.3.123:5000/users/authenticate-login/";
+    */
+    private static final String API_SUMMARY_URL = "http://10.0.2.2:5000/users/get-patient-summary/";
+    private static final String API_MEASUREMENTS_URL = "http://10.0.2.2:5000/users/get-all-recent-measurements/";
 
 //    private Button btnRecord;
     private Button btnChat;

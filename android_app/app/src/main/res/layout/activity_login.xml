@@ -104,17 +104,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnGoogle"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:background="@drawable/google"
-            android:elevation="35dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/viewPager" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

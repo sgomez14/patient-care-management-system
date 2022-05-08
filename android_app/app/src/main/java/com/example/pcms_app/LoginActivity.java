@@ -17,16 +17,21 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONObject;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String API_BASE_URL = "http://10.0.2.2:5000/users/authenticate-login/";
-//    private static final String API_BASE_URL = "http://192.168.99.61:5000/users/authenticate-login/"; // Santiago home server
-//    private static final String API_BASE_URL = "http://10.192.3.123:5000/users/authenticate-login/"; //bu public
+    /*
+    10.0.2.2 is the ip address of emulator. If you are testing on android studio emulator, use the line below.
+    Otherwise, change 10.0.2.2 to your own ip address if testing on actual device.
+    An example is provided below for BU public.
 
-    private AppCompatButton btnGoogle, btnLogin;
+    BU Public:
+    private static final String API_BASE_URL = "http://10.192.3.123:5000/users/authenticate-login/";
+    */
+    private static final String API_BASE_URL = "http://10.0.2.2:5000/users/authenticate-login/";
+
+    private AppCompatButton btnLogin;
     private EditText userName, password;
     private float v = 0;
     private String role = "";
@@ -42,7 +47,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // Instantiate views
-        btnGoogle = findViewById(R.id.btnGoogle);
         btnLogin = findViewById(R.id.btnLogin);
         userName = findViewById(R.id.userName);
         password = findViewById(R.id.password);
@@ -72,17 +76,14 @@ public class LoginActivity extends AppCompatActivity {
         userName.setTranslationY(300);
         password.setTranslationY(300);
         btnLogin.setTranslationY(300);
-        btnGoogle.setTranslationY(300);
 
         userName.setAlpha(v);
         password.setAlpha(v);
         btnLogin.setAlpha(v);
-        btnGoogle.setAlpha(v);
 
         btnLogin.animate().translationY(0).alpha(1).setDuration(1500).setStartDelay(100).start();
         password.animate().translationY(0).alpha(1).setDuration(1500).setStartDelay(100).start();
         userName.animate().translationY(0).alpha(1).setDuration(1500).setStartDelay(100).start();
-        btnGoogle.animate().translationY(0).alpha(1).setDuration(1500).setStartDelay(100).start();
     }
 
     // Function to authenticate username and password through Restful API
