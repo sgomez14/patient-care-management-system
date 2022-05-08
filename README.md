@@ -1,6 +1,12 @@
 # patient-care-management-system
 Patient Care Management System Developed for BU EC 530 Software Engineering
 
+
+
+https://user-images.githubusercontent.com/82246325/167280007-faf2e859-b2ab-4997-9804-fc75e4d6bbe1.mp4
+
+
+
 # Documentation for Device and Chat Modules
 Documentation for the Device and Chat modules is maintained in this repository's [wiki section](https://github.com/sgomez14/patient-care-management-system/wiki).
 
