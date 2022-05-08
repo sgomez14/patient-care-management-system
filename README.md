@@ -101,3 +101,11 @@ Patients and doctors of the healthcare organization using our Patient Care Manag
 ## Login
 
 ![Image of Patient Care Management System Android App Login Screen](https://user-images.githubusercontent.com/30096097/167276741-7c56b873-69b1-484c-b04e-eb593e344230.png)
+
+
+## Assignments 
+
+- On this screen a patient sees all of the doctors assigned to them. If a doctor is using the app, then they will see all of the patients assigned to them.
+
+![Image of Patient Care Management System Android App Assignments Screen](https://user-images.githubusercontent.com/30096097/167276975-69f8b3b0-0f5b-4d55-b217-e363e9788940.png)
+
