@@ -6,13 +6,17 @@ Patient Care Management System Developed for BU EC 530 Software Engineering
 # Documentation for User Module
 Documentation for the User module resides on here on the main README.
 
-The User module provide applications access to user related information. Applications can request the following data:
+The Users module provide applications access to user related information. Applications can request the following data:
 
 > - [Login Authentication](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersauthenticate-loginlogin_json)
 > - [User Full Name](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersget-user-fullnameuser_id)
 > - [Doctor/Patient Assignments](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersget-assignmentsuser_id)
 > - [Patient Summary](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersget-patient-summaryuser_id)
 > - [Patient Recent Measurements](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersget-all-recent-measurementsuser_id)
+
+
+This module also supports a mobile app.
+> - [Patient Care Management System Android App](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#patient-care-management-system-android-app)
 
 
 ## Users Module Architecture
