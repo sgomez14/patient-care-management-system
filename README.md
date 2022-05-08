@@ -86,3 +86,52 @@ Successful Response
 
 
 ![Image of Successful Get Patient Recent Measurements Response JSON](https://user-images.githubusercontent.com/30096097/167274537-5f2ef0cf-e177-4dc3-903e-2bf1bc846059.png)
+
+
+# Patient Care Management System Android App
+
+Patients and doctors of the healthcare organization using our Patient Care Management System can interact with each other via a mobile Android app. This mobile app enables patients and doctors to easily see their most recent health data. It also facilitates direct 1-to-1 chat.
+
+## App Start Up
+
+![Image of Patient Care Management System Android App Startup Screen](https://user-images.githubusercontent.com/30096097/167276701-55f32f2e-2eb6-4e93-9c9b-ee88388c56b3.png)
+
+
+
+## Login
+
+![Image of Patient Care Management System Android App Login Screen](https://user-images.githubusercontent.com/30096097/167276741-7c56b873-69b1-484c-b04e-eb593e344230.png)
+
+
+## Assignments 
+
+- On this screen a patient sees all of the doctors assigned to them. If a doctor is using the app, then they will see all of the patients assigned to them.
+
+![Image of Patient Care Management System Android App Assignments Screen](https://user-images.githubusercontent.com/30096097/167276975-69f8b3b0-0f5b-4d55-b217-e363e9788940.png)
+
+
+## Patient Record
+
+- Clicking on a name on the assignments screen brings the user to the patient's record screen.
+- On this screen there is a summary of the patient and a listing of the most recent measurements.
+- The most recent measurements section is scrollable.
+
+![Image of Patient Care Management System Android App Patient Record Screen 1](https://user-images.githubusercontent.com/30096097/167277432-7fcbe5e3-967f-49ce-9081-09f38b934cd2.png)
+
+
+![Image of Patient Care Management System Android App Patient Record Screen 2](https://user-images.githubusercontent.com/30096097/167277451-182bfce9-c94f-45ba-80e6-f08e3f0b0d8f.png)
+
+
+## Chat 
+
+Patient Sending Chat Message to Doctor
+
+
+![Image of Patient Care Management System Android App Patient Sending Chat Message to Doctor Screen](https://user-images.githubusercontent.com/30096097/167277644-f6ce7a3c-0d56-4f50-9677-af105f207a98.png)
+
+Doctor Sending Chat Message to Patient
+
+
+![Image of Patient Care Management System Android App Doctor Sending Chat Message to Patient Screen](https://user-images.githubusercontent.com/30096097/167277652-444896c9-5f2b-4faa-98a5-8e7717567fed.png)
+
+
