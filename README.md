@@ -87,7 +87,14 @@ Successful Response
 
 ![Image of Successful Get Patient Recent Measurements Response JSON](https://user-images.githubusercontent.com/30096097/167274537-5f2ef0cf-e177-4dc3-903e-2bf1bc846059.png)
 
+</br></br>
+# Users Module Architecture
 
+
+![Image of Users Module Architecture](https://user-images.githubusercontent.com/30096097/167279657-5cb61466-ca8a-483c-88c3-4dd124332543.png)
+
+
+</br></br>
 # Patient Care Management System Android App
 
 Patients and doctors of the healthcare organization using our Patient Care Management System can interact with each other via a mobile Android app. This mobile app enables patients and doctors to easily see their most recent health data. It also facilitates direct 1-to-1 chat.
