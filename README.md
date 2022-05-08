@@ -1,28 +1,6 @@
-# patient-care-management-system
+# Patient Care Management System
 Patient Care Management System Developed for BU EC 530 Software Engineering
 
-
-
-https://user-images.githubusercontent.com/82246325/167280007-faf2e859-b2ab-4997-9804-fc75e4d6bbe1.mp4
-
-
-
-# Documentation for Device and Chat Modules
-Documentation for the Device and Chat modules is maintained in this repository's [wiki section](https://github.com/sgomez14/patient-care-management-system/wiki).
-
-> [Branching Strategy](https://github.com/sgomez14/patient-care-management-system/wiki/Branching-Strategy) 
->
-> [Device Measurement Data Packet Structure](https://github.com/sgomez14/patient-care-management-system/wiki/Device-Measurement-Data-Packet)
->
-> [Device Interface API](https://github.com/sgomez14/patient-care-management-system/wiki/Device-Interface-API)
->
-> [Chat Module Data Packet Structure](https://github.com/sgomez14/patient-care-management-system/wiki/Chat-Module-Data-Structure)
->
->[Chat Interface API](https://github.com/sgomez14/patient-care-management-system/wiki/Chat-Interface-API)
-
-
-# Progress Report
-Full progress report is located in the [wiki](https://github.com/sgomez14/patient-care-management-system/wiki).
 
 
 # Documentation for User Module
@@ -35,6 +13,11 @@ The User module provide applications access to user related information. Applica
 > - [Doctor/Patient Assignments](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersget-assignmentsuser_id)
 > - [Patient Summary](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersget-patient-summaryuser_id)
 > - [Patient Recent Measurements](https://github.com/sgomez14/patient-care-management-system/blob/main/README.md#get-usersget-all-recent-measurementsuser_id)
+
+
+## Users Module Architecture
+
+![Image of Users Module Architecture](https://user-images.githubusercontent.com/30096097/167279657-5cb61466-ca8a-483c-88c3-4dd124332543.png)
 
 ## User API Endpoints
 ### `GET` /users/authenticate-login/{login_json}
@@ -93,17 +76,16 @@ Successful Response
 
 ![Image of Successful Get Patient Recent Measurements Response JSON](https://user-images.githubusercontent.com/30096097/167274537-5f2ef0cf-e177-4dc3-903e-2bf1bc846059.png)
 
-</br></br>
-# Users Module Architecture
 
-
-![Image of Users Module Architecture](https://user-images.githubusercontent.com/30096097/167279657-5cb61466-ca8a-483c-88c3-4dd124332543.png)
 
 
 </br></br>
 # Patient Care Management System Android App
 
 Patients and doctors of the healthcare organization using our Patient Care Management System can interact with each other via a mobile Android app. This mobile app enables patients and doctors to easily see their most recent health data. It also facilitates direct 1-to-1 chat.
+
+
+https://user-images.githubusercontent.com/82246325/167280007-faf2e859-b2ab-4997-9804-fc75e4d6bbe1.mp4
 
 ## App Start Up
 
@@ -148,3 +130,22 @@ Doctor Sending Chat Message to Patient
 ![Image of Patient Care Management System Android App Doctor Sending Chat Message to Patient Screen](https://user-images.githubusercontent.com/30096097/167277652-444896c9-5f2b-4faa-98a5-8e7717567fed.png)
 
 
+
+
+
+# Documentation for Device and Chat Modules
+Documentation for the Device and Chat modules is maintained in this repository's [wiki section](https://github.com/sgomez14/patient-care-management-system/wiki).
+
+> [Branching Strategy](https://github.com/sgomez14/patient-care-management-system/wiki/Branching-Strategy) 
+>
+> [Device Measurement Data Packet Structure](https://github.com/sgomez14/patient-care-management-system/wiki/Device-Measurement-Data-Packet)
+>
+> [Device Interface API](https://github.com/sgomez14/patient-care-management-system/wiki/Device-Interface-API)
+>
+> [Chat Module Data Packet Structure](https://github.com/sgomez14/patient-care-management-system/wiki/Chat-Module-Data-Structure)
+>
+>[Chat Interface API](https://github.com/sgomez14/patient-care-management-system/wiki/Chat-Interface-API)
+
+
+# Progress Report
+Full progress report is located in the [wiki](https://github.com/sgomez14/patient-care-management-system/wiki).
