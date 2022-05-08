@@ -122,4 +122,16 @@ Patients and doctors of the healthcare organization using our Patient Care Manag
 ![Image of Patient Care Management System Android App Patient Record Screen 2](https://user-images.githubusercontent.com/30096097/167277451-182bfce9-c94f-45ba-80e6-f08e3f0b0d8f.png)
 
 
+## Chat 
+
+Patient Sending Chat Message to Doctor
+
+
+![Image of Patient Care Management System Android App Patient Sending Chat Message to Doctor Screen](https://user-images.githubusercontent.com/30096097/167277644-f6ce7a3c-0d56-4f50-9677-af105f207a98.png)
+
+Doctor Sending Chat Message to Patient
+
+
+![Image of Patient Care Management System Android App Doctor Sending Chat Message to Patient Screen](https://user-images.githubusercontent.com/30096097/167277652-444896c9-5f2b-4faa-98a5-8e7717567fed.png)
+
 
