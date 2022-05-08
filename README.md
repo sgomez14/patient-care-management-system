@@ -109,3 +109,17 @@ Patients and doctors of the healthcare organization using our Patient Care Manag
 
 ![Image of Patient Care Management System Android App Assignments Screen](https://user-images.githubusercontent.com/30096097/167276975-69f8b3b0-0f5b-4d55-b217-e363e9788940.png)
 
+
+## Patient Record
+
+- Clicking on a name on the assignments screen brings the user to the patient's record screen.
+- On this screen there is a summary of the patient and a listing of the most recent measurements.
+- The most recent measurements section is scrollable.
+
+![Image of Patient Care Management System Android App Patient Record Screen 1](https://user-images.githubusercontent.com/30096097/167277432-7fcbe5e3-967f-49ce-9081-09f38b934cd2.png)
+
+
+![Image of Patient Care Management System Android App Patient Record Screen 2](https://user-images.githubusercontent.com/30096097/167277451-182bfce9-c94f-45ba-80e6-f08e3f0b0d8f.png)
+
+
+
